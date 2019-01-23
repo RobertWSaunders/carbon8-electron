@@ -1,0 +1,46 @@
+{
+  "name": "carbon8-fountain",
+  "version": "1.0.0",
+  "description": "Node server and React app that is run on a physical Carbon8 fountain",
+  "author": "Robert Saunders",
+  "homepage": "https://github.com/RobertWSaunders/carbon8-fountain#readme",
+  "bugs": {
+    "url": "https://github.com/RobertWSaunders/carbon8-fountain/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RobertWSaunders/carbon8-fountain.git"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
+  "scripts": {
+    "bootstrap": "npm install --unsafe-perm || ((if [ -f npm-debug.log ]; then cat npm-debug.log; fi) && false) && lerna bootstrap --no-ci",
+    "build": "lerna run build --stream",
+    "dev": "lerna run dev --scope server --scope client --stream --parallel",
+    "start": "lerna run start --scope server --stream",
+    "style": "eslint --fix \"packages/server/**/*.js\" ; eslint --fix \"packages/client/**/*.js\"",
+    "format": "prettier --write 'packages/server/**/*.js' && prettier --write 'packages/client/**/*.js'"
+  },
+  "engines": {
+    "node": "8.11.x",
+    "npm": "5.x"
+  },
+  "devDependencies": {
+    "babel-eslint": "^9.0.0",
+    "coveralls": "^3.0.2",
+    "eslint": "^5.6.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-prettier": "^3.0.1",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-react": "^7.11.1",
+    "husky": "^1.0.0-rc.14",
+    "lerna": "^3.4.0",
+    "prettier": "^1.14.2",
+    "pretty-quick": "^1.6.0"
+  }
+}
