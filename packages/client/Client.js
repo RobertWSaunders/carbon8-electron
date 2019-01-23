@@ -1,12 +1,15 @@
 import "@babel/polyfill";
 
+import { Provider } from "react-redux";
 import { render } from "react-dom";
 import React from "react";
 
-const Client = () => (
-  <div>
-    <h1>Test</h1>
-  </div>
-);
+import { getStore } from "./ClientStore";
+import App from "./components/App";
 
-render(<Client />, document.getElementById("root"));
+render(
+  <Provider store={getStore()}>
+    <App />
+  </Provider>,
+  document.getElementById("root")
+);

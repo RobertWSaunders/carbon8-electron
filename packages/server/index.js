@@ -1,25 +1,37 @@
 require("dotenv").config();
 
 const history = require("connect-history-api-fallback");
-const compression = require("compression");
-const bodyParser = require("body-parser");
+const logger = require("./utils/logger");
 const express = require("express");
-const helmet = require("helmet");
 const path = require("path");
-const cors = require("cors");
+const http = require("http");
 
 const IS_PROD = process.env.NODE_ENV === "production";
 const FORCE_SSL = process.env.FORCE_SSL === "true";
 
 IS_PROD
-  ? console.log("Running production server!")
-  : console.log("Running development server!");
+  ? logger.info("Running production server!")
+  : logger.info("Running development server!");
 
 // Path to static files
 const BUNDLE_DIR = path.join(__dirname, "../client/bundle");
 
+// Express server
 const app = express();
 const port = process.env.PORT || 3000;
+
+// HTTP server
+const server = http.createServer(app);
+
+// Socket.IO setup
+const io = require("socket.io")(server, {
+  path: "/socket",
+  serveClient: false,
+  transports: ["websocket"]
+});
+
+// Configure socket handlers
+require("./socket")(io, logger);
 
 // HTTPS redirect
 if (IS_PROD) {
@@ -35,13 +47,6 @@ if (IS_PROD) {
   }
 }
 
-// Third party middleware
-app.use(cors());
-app.use(helmet());
-app.use(compression());
-app.use(bodyParser.json({ limit: "10mb" }));
-app.use(bodyParser.urlencoded({ extended: true }));
-
 // Fallback if required
 app.use(history());
 
@@ -49,6 +54,6 @@ app.use(history());
 app.use(express.static(BUNDLE_DIR));
 
 // Start listening!
-app.listen(port, () => {
-  console.log(`Carbon8 Fountain is running on port ${port}!`);
+server.listen(port, () => {
+  logger.info(`Carbon8 Fountain is running on port ${port}!`);
 });
