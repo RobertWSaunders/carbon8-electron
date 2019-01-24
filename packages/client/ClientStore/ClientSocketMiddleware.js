@@ -1,57 +1,75 @@
 import io from "socket.io-client";
 
-import { actionTypes } from "./ClientActions";
-import { selectors } from "./ClientReducer";
-
-let ws;
 let store;
-let options = {};
+let socket;
+let socketUri;
+let socketActionRegex;
+let socketEventActionMap;
+let socketConnectionActionTypes;
+
 const buffer = [];
 
 function isSocketMiddlewareAction(action) {
-  return action.type.match(/^@@\/client\/hardware\/socket\/.*/g);
+  return action.type.match(socketActionRegex);
 }
 
-function getSocketActionFromAction(action) {
+function getSocketActionFromReduxAction(action) {
   const words = action.type.split("/");
 
   return words[words.length - 1];
 }
 
-function handleAction(action) {
-  if (!ws) {
-    buffer.push(action);
+function createSocketConnection() {
+  socket = io(socketUri, {
+    path: "/socket",
+    transports: ["websocket"]
+  });
 
-    ws = io("http://localhost:3000", {
-      path: "/socket",
-      transports: ["websocket"]
-    });
+  socket.on("connect", () => {
+    if (buffer.length > 0) {
+      buffer.forEach((action) => {
+        socket.emit(getSocketActionFromReduxAction(action));
+      });
+    }
 
-    ws.on("connect", () => {
-      if (buffer.length > 0) {
-        buffer.forEach((action) => {
-          ws.emit(getSocketActionFromAction(action));
-        });
-      }
+    store.dispatch({ type: socketConnectionActionTypes.connected });
+  });
 
-      store.dispatch({ type: actionTypes.SOCKET_CONNECTED });
-    });
+  socket.on("disconnect", () => {
+    store.dispatch({ type: socketConnectionActionTypes.disconnected });
+  });
 
-    ws.on("disconnect", () => {
-      store.dispatch({ type: actionTypes.SOCKET_DISCONNECTED });
-    });
-  } else {
-    ws.emit(getSocketActionFromAction(action));
-  }
+  socket.on("message", (event) => {
+    if (event.type && socketEventActionMap[event.type]) {
+      store.dispatch({
+        type: socketEventActionMap[event.type],
+        data: event.data
+      });
+    }
+  });
 }
 
-export function createSocketMiddleware(opt) {
+function handleSocketAction(action) {
+  if (!socket) {
+    buffer.push(action);
+
+    return createSocketConnection();
+  }
+
+  socket.emit(getSocketActionFromReduxAction(action));
+}
+
+export function createSocketMiddleware(opts) {
   return (storeRef) => {
     store = storeRef;
-    options = opt;
+
+    socketUri = opts.socketUri;
+    socketActionRegex = opts.socketActionRegex;
+    socketEventActionMap = opts.socketEventActionMap;
+    socketConnectionActionTypes = opts.socketConnectionActionTypes;
 
     return (next) => (action) => {
-      if (isSocketMiddlewareAction(action)) handleAction(action);
+      if (isSocketMiddlewareAction(action)) handleSocketAction(action);
 
       next(action);
     };

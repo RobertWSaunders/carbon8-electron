@@ -1,31 +1,39 @@
-const clientSocketMiddlwareActionTypes = {
-  SOCKET_CONNECTED: "@@/client/SOCKET_CONNECTED",
-  SOCKET_DISCONNECTED: "@@/client/SOCKET_DISCONNECTED",
+const clientActionTypes = {};
 
-  // Local Server Socket Actions
-
-  TURN_ON_LED: "@@/client/hardware/socket/TURN_ON_LED",
-  TURN_OFF_LED: "@@/client/hardware/socket/TURN_OFF_LED"
+const socketMiddlewareActionTypes = {
+  SERVER_SOCKET_CONNECTED: "@@/client/SERVER_SOCKET_CONNECTED",
+  SERVER_SOCKET_DISCONNECTED: "@@/client/SERVER_SOCKET_DISCONNECTED"
 };
 
-const normalTypes = {};
+const hardwareSocketMiddlwareActionTypes = {
+  HARDWARE_SOCKET_CONNECTED: "@@/client/HARDWARE_SOCKET_CONNECTED",
+  HARDWARE_SOCKET_DISCONNECTED: "@@/client/HARDWARE_SOCKET_DISCONNECTED",
+
+  TURN_ON_FLAT_WATER: "@@/client/hardware/socket/TURN_ON_FLAT_WATER",
+  TURN_OFF_FLAT_WATER: "@@/client/hardware/socket/TURN_OFF_FLAT_WATER",
+  TURN_ON_SPARKLING_WATER: "@@/client/hardware/socket/TURN_ON_SPARKLING_WATER",
+  TURN_OFF_SPARKING_WATER: "@@/client/hardware/socket/TURN_OFF_SPARKING_WATER"
+};
 
 export const actionTypes = {
-  ...normalTypes,
-  ...clientSocketMiddlwareActionTypes
+  ...clientActionTypes,
+  ...socketMiddlewareActionTypes,
+  ...hardwareSocketMiddlwareActionTypes
 };
 
-const invokeHardwareSocketActionCreators = {
-  turnLedOn: () => ({ type: clientSocketMiddlwareActionTypes.TURN_ON_LED }),
-  turnLedOff: () => ({ type: clientSocketMiddlwareActionTypes.TURN_OFF_LED })
-};
+const clientActionCreators = {};
 
 const invokeSocketActionCreators = {};
 
-const normalActionCreators = {};
+const invokeHardwareSocketActionCreators = {
+  turnOnFlatWater: () => ({ type: actionTypes.TURN_ON_FLAT_WATER }),
+  turnOffFlatWater: () => ({ type: actionTypes.TURN_OFF_FLAT_WATER }),
+  turnOnSparklingWater: () => ({ type: actionTypes.TURN_ON_SPARKLING_WATER }),
+  turnOffSparklingWater: () => ({ type: actionTypes.TURN_OFF_SPARKING_WATER })
+};
 
 export const actionCreators = {
-  ...normalActionCreators,
+  ...clientActionCreators,
   ...invokeSocketActionCreators,
   ...invokeHardwareSocketActionCreators
 };

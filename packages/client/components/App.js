@@ -3,22 +3,22 @@ import { connect } from "react-redux";
 
 import { actionCreators, selectors } from "../ClientStore";
 
-const { turnLedOn, turnLedOff } = actionCreators;
-const { getLedStatus } = selectors;
+const { turnOnFlatWater, turnOffFlatWater } = actionCreators;
+const { getFlatWaterStatus } = selectors;
 
 class App extends Component {
   changeState() {
-    if (this.props.ledStatus) {
-      this.props.turnLedOff();
+    if (this.props.flatWaterStatus) {
+      this.props.turnOffFlatWater();
     } else {
-      this.props.turnLedOn();
+      this.props.turnOnFlatWater();
     }
   }
 
   render() {
     return (
       <div>
-        <h1>LED Status: {`${this.props.ledStatus}`}</h1>
+        <h1>LED Status: {`${this.props.flatWaterStatus}`}</h1>
         <button onClick={this.changeState.bind(this)}>Toggle LED</button>
       </div>
     );
@@ -28,11 +28,11 @@ class App extends Component {
 function mapStateToProps(state, ownProps) {
   return {
     ...ownProps,
-    ledStatus: getLedStatus(state)
+    flatWaterStatus: getFlatWaterStatus(state)
   };
 }
 
 export default connect(
   mapStateToProps,
-  { turnLedOn, turnLedOff }
+  { turnOnFlatWater, turnOffFlatWater }
 )(App);

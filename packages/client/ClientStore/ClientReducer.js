@@ -3,27 +3,46 @@ import { actionTypes } from "./ClientActions";
 export const reducerMount = "client";
 
 const initialState = {
-  socketConnected: false,
+  serverSocketConnected: false,
+  hardwareSocketConnected: false,
 
-  ledStatus: false
+  flatWaterStatus: false,
+  sparklingWaterStatus: false
 };
 
 export const selectors = {
-  getSocketConnected: (state) => state[reducerMount].socketConnected,
-  getLedStatus: (state) => state[reducerMount].ledStatus
+  getServerSocketConnected: (state) =>
+    state[reducerMount].serverSocketConnected,
+  getHardwareSocketConnected: (state) =>
+    state[reducerMount].hardwareSocketConnected,
+
+  getFlatWaterStatus: (state) => state[reducerMount].flatWaterStatus,
+  getSparklingWaterStatus: (state) => state[reducerMount].sparklingWaterStatus
 };
 
 const handlers = {
-  [actionTypes.TURN_ON_LED]: (state, action) => {
+  [actionTypes.TURN_ON_SPARKLING_WATER]: (state) => {
     return {
       ...state,
-      ledStatus: true
+      sparklingWaterStatus: true
     };
   },
-  [actionTypes.TURN_OFF_LED]: (state, action) => {
+  [actionTypes.TURN_OFF_SPARKLING_WATER]: (state) => {
     return {
       ...state,
-      ledStatus: false
+      sparklingWaterStatus: false
+    };
+  },
+  [actionTypes.TURN_ON_FLAT_WATER]: (state) => {
+    return {
+      ...state,
+      flatWaterStatus: true
+    };
+  },
+  [actionTypes.TURN_OFF_FLAT_WATER]: (state) => {
+    return {
+      ...state,
+      flatWaterStatus: false
     };
   }
 };
