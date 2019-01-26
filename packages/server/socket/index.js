@@ -7,7 +7,13 @@ const socketEvents = {
   SOCKET_CONNECTION: "connection",
   SOCKET_DISCONNECT: "disconnect",
   SOCKET_DISCONNECTING: "disconnecting",
-  SOCKET_ERROR: "error"
+  SOCKET_ERROR: "error",
+
+  SPARKLING_WATER_ON: "SPARKLING_WATER_ON",
+  SPARKING_WATER_OFF: "SPARKING_WATER_OFF",
+
+  FLAT_WATER_ON: "FLAT_WATER_ON",
+  FLAT_WATER_OFF: "FLAT_WATER_OFF"
 };
 
 const socketActions = {
@@ -36,18 +42,34 @@ module.exports = (io, logger) => {
 
     socket.on(socketActions.TURN_ON_SPARKLING_WATER, () => {
       // sparklingWaterSolenoid.writeSync(1);
+
+      socket.send({
+        type: socketEvents.SPARKLING_WATER_ON
+      });
     });
 
     socket.on(socketActions.TURN_OFF_SPARKING_WATER, () => {
       // sparklingWaterSolenoid.writeSync(0);
+
+      socket.send({
+        type: socketEvents.SPARKING_WATER_OFF
+      });
     });
 
     socket.on(socketActions.TURN_ON_FLAT_WATER, () => {
       // flatWaterSolenoid.writeSync(1);
+
+      socket.send({
+        type: socketEvents.FLAT_WATER_ON
+      });
     });
 
     socket.on(socketActions.TURN_OFF_FLAT_WATER, () => {
       // flatWaterSolenoid.writeSync(0);
+
+      socket.send({
+        type: socketEvents.FLAT_WATER_OFF
+      });
     });
   });
 };

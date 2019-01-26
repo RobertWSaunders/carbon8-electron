@@ -49,25 +49,25 @@ const handlers = {
       hardwareSocketConnected: false
     };
   },
-  [actionTypes.TURN_ON_SPARKLING_WATER]: (state) => {
+  [actionTypes.SPARKLING_WATER_ON]: (state) => {
     return {
       ...state,
       sparklingWaterStatus: true
     };
   },
-  [actionTypes.TURN_OFF_SPARKLING_WATER]: (state) => {
+  [actionTypes.SPARKLING_WATER_OFF]: (state) => {
     return {
       ...state,
       sparklingWaterStatus: false
     };
   },
-  [actionTypes.TURN_ON_FLAT_WATER]: (state) => {
+  [actionTypes.FLAT_WATER_ON]: (state) => {
     return {
       ...state,
       flatWaterStatus: true
     };
   },
-  [actionTypes.TURN_OFF_FLAT_WATER]: (state) => {
+  [actionTypes.FLAT_WATER_OFF]: (state) => {
     return {
       ...state,
       flatWaterStatus: false
