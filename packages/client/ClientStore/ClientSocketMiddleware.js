@@ -1,77 +1,103 @@
 import io from "socket.io-client";
 
-let store;
-let socket;
-let socketUri;
-let socketActionRegex;
-let socketEventActionMap;
-let socketConnectionActionTypes;
+const AUTHENTICATE_SOCKET_ACTION = "AUTHENTICATE";
 
-const buffer = [];
+class ClientSocketMiddleware {
+  constructor(opts) {
+    this.store;
+    this.socket;
+    this.buffer = [];
 
-function isSocketMiddlewareAction(action) {
-  return action.type.match(socketActionRegex);
-}
-
-function getSocketActionFromReduxAction(action) {
-  const words = action.type.split("/");
-
-  return words[words.length - 1];
-}
-
-function createSocketConnection() {
-  socket = io(socketUri, {
-    path: "/socket",
-    transports: ["websocket"]
-  });
-
-  socket.on("connect", () => {
-    if (buffer.length > 0) {
-      buffer.forEach((action) => {
-        socket.emit(getSocketActionFromReduxAction(action));
-      });
-    }
-
-    store.dispatch({ type: socketConnectionActionTypes.connected });
-  });
-
-  socket.on("disconnect", () => {
-    store.dispatch({ type: socketConnectionActionTypes.disconnected });
-  });
-
-  socket.on("message", (event) => {
-    if (event.type && socketEventActionMap[event.type]) {
-      store.dispatch({
-        type: socketEventActionMap[event.type],
-        data: event.data
-      });
-    }
-  });
-}
-
-function handleSocketAction(action) {
-  if (!socket) {
-    buffer.push(action);
-
-    return createSocketConnection();
+    this.socketUri = opts.socketUri;
+    this.storageAccess = opts.storageAccess;
+    this.accessTokenKey = opts.accessTokenKey;
+    this.socketEventActionMap = opts.socketEventActionMap;
+    this.middlewareActionRegex = opts.middlewareActionRegex;
+    this.socketConnectionActionTypes = opts.socketConnectionActionTypes;
+    this.socketAuthenticateOnConnect = opts.socketAuthenticateOnConnect;
   }
 
-  socket.emit(getSocketActionFromReduxAction(action));
-}
+  isSocketMiddlewareAction(action) {
+    return action.type.match(this.middlewareActionRegex);
+  }
 
-export function createSocketMiddleware(opts) {
-  return (storeRef) => {
-    store = storeRef;
+  getSocketActionFromReduxAction(action) {
+    const words = action.type.split("/");
 
-    socketUri = opts.socketUri;
-    socketActionRegex = opts.socketActionRegex;
-    socketEventActionMap = opts.socketEventActionMap;
-    socketConnectionActionTypes = opts.socketConnectionActionTypes;
+    return words[words.length - 1];
+  }
 
-    return (next) => (action) => {
-      if (isSocketMiddlewareAction(action)) handleSocketAction(action);
+  createSocketConnection() {
+    this.socket = io(this.socketUri, {
+      path: "/socket",
+      transports: ["websocket"]
+    });
 
-      next(action);
+    this.socket.on("connect", () => {
+      if (this.socketAuthenticateOnConnect) {
+        const accessToken = this.storageAccess.getValue(this.accessTokenKey);
+
+        if (accessToken) {
+          this.socket.emit(AUTHENTICATE_SOCKET_ACTION, {
+            accessToken
+          });
+        }
+      }
+
+      if (this.buffer.length > 0) {
+        this.buffer.forEach((action) => {
+          this.socket.emit(this.getSocketActionFromReduxAction(action));
+        });
+      }
+
+      this.store.dispatch({ type: this.socketConnectionActionTypes.connected });
+    });
+
+    this.socket.on("disconnect", () => {
+      this.store.dispatch({
+        type: this.socketConnectionActionTypes.disconnected
+      });
+    });
+
+    this.socket.on("message", (event) => {
+      if (event.type && this.socketEventActionMap[event.type]) {
+        this.store.dispatch({
+          type: this.socketEventActionMap[event.type],
+          data: event.data
+        });
+      }
+    });
+  }
+
+  handleSocketAction(action) {
+    if (!this.socket) {
+      this.buffer.push(action);
+
+      return this.createSocketConnection();
+    }
+
+    this.socket.emit(this.getSocketActionFromReduxAction(action));
+  }
+
+  socketMiddleware() {
+    return (storeRef) => {
+      this.store = storeRef;
+
+      return (next) => (action) => {
+        if (this.isSocketMiddlewareAction(action)) {
+          this.handleSocketAction(action);
+        }
+
+        next(action);
+      };
     };
-  };
+  }
 }
+
+function createSocketMiddleware(opts) {
+  const socketMiddlware = new ClientSocketMiddleware(opts);
+
+  return socketMiddlware.socketMiddleware();
+}
+
+export default createSocketMiddleware;

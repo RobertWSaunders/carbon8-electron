@@ -7,7 +7,9 @@ const initialState = {
   hardwareSocketConnected: false,
 
   flatWaterStatus: false,
-  sparklingWaterStatus: false
+  sparklingWaterStatus: false,
+
+  test: ""
 };
 
 export const selectors = {
@@ -17,10 +19,36 @@ export const selectors = {
     state[reducerMount].hardwareSocketConnected,
 
   getFlatWaterStatus: (state) => state[reducerMount].flatWaterStatus,
-  getSparklingWaterStatus: (state) => state[reducerMount].sparklingWaterStatus
+  getSparklingWaterStatus: (state) => state[reducerMount].sparklingWaterStatus,
+
+  getTest: (state) => state[reducerMount].test
 };
 
 const handlers = {
+  [actionTypes.SERVER_SOCKET_CONNECTED]: (state) => {
+    return {
+      ...state,
+      serverSocketConnected: true
+    };
+  },
+  [actionTypes.SERVER_SOCKET_DISCONNECTED]: (state) => {
+    return {
+      ...state,
+      serverSocketConnected: false
+    };
+  },
+  [actionTypes.HARDWARE_SOCKET_CONNECTED]: (state) => {
+    return {
+      ...state,
+      hardwareSocketConnected: true
+    };
+  },
+  [actionTypes.HARDWARE_SOCKET_DISCONNECTED]: (state) => {
+    return {
+      ...state,
+      hardwareSocketConnected: false
+    };
+  },
   [actionTypes.TURN_ON_SPARKLING_WATER]: (state) => {
     return {
       ...state,
@@ -43,6 +71,14 @@ const handlers = {
     return {
       ...state,
       flatWaterStatus: false
+    };
+  },
+  [actionTypes.SOCKET_TEST]: (state, action) => {
+    const { test } = action.data;
+
+    return {
+      ...state,
+      test
     };
   }
 };

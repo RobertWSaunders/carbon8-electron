@@ -1,13 +1,31 @@
 const clientActionTypes = {};
 
-const socketMiddlewareActionTypes = {
-  SERVER_SOCKET_CONNECTED: "@@/client/SERVER_SOCKET_CONNECTED",
-  SERVER_SOCKET_DISCONNECTED: "@@/client/SERVER_SOCKET_DISCONNECTED"
+const serverSocketMiddlewareActionTypes = {
+  SERVER_SOCKET_CONNECTED:
+    "@@/client/server/socket/internal/SERVER_SOCKET_CONNECTED",
+  SERVER_SOCKET_DISCONNECTED:
+    "@@/client/server/socket/internal/SERVER_SOCKET_DISCONNECTED",
+
+  // Actions
+
+  TEST_EMIT: "@@/client/server/socket/TEST_EMIT",
+
+  // Events
+
+  SOCKET_TEST: "@@/client/server/socket/internal/SOCKET_TEST"
+};
+
+export const serverSocketEventActionMap = {
+  ["TEST"]: serverSocketMiddlewareActionTypes.SOCKET_TEST
 };
 
 const hardwareSocketMiddlwareActionTypes = {
-  HARDWARE_SOCKET_CONNECTED: "@@/client/HARDWARE_SOCKET_CONNECTED",
-  HARDWARE_SOCKET_DISCONNECTED: "@@/client/HARDWARE_SOCKET_DISCONNECTED",
+  HARDWARE_SOCKET_CONNECTED:
+    "@@/client/hardware/socket/internal/HARDWARE_SOCKET_CONNECTED",
+  HARDWARE_SOCKET_DISCONNECTED:
+    "@@/client/hardware/socket/internal/HARDWARE_SOCKET_DISCONNECTED",
+
+  // Actions
 
   TURN_ON_FLAT_WATER: "@@/client/hardware/socket/TURN_ON_FLAT_WATER",
   TURN_OFF_FLAT_WATER: "@@/client/hardware/socket/TURN_OFF_FLAT_WATER",
@@ -15,15 +33,19 @@ const hardwareSocketMiddlwareActionTypes = {
   TURN_OFF_SPARKING_WATER: "@@/client/hardware/socket/TURN_OFF_SPARKING_WATER"
 };
 
+export const hardwareSocketEventActionMap = {};
+
 export const actionTypes = {
   ...clientActionTypes,
-  ...socketMiddlewareActionTypes,
+  ...serverSocketMiddlewareActionTypes,
   ...hardwareSocketMiddlwareActionTypes
 };
 
 const clientActionCreators = {};
 
-const invokeSocketActionCreators = {};
+const invokeServerSocketActionCreators = {
+  fireTest: () => ({ type: actionTypes.TEST_EMIT })
+};
 
 const invokeHardwareSocketActionCreators = {
   turnOnFlatWater: () => ({ type: actionTypes.TURN_ON_FLAT_WATER }),
@@ -34,6 +56,6 @@ const invokeHardwareSocketActionCreators = {
 
 export const actionCreators = {
   ...clientActionCreators,
-  ...invokeSocketActionCreators,
+  ...invokeServerSocketActionCreators,
   ...invokeHardwareSocketActionCreators
 };

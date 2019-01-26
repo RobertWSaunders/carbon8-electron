@@ -1,7 +1,7 @@
-const Gpio = require("onoff").Gpio;
+// const Gpio = require("onoff").Gpio;
 
-const flatWaterSolenoid = new Gpio(18, "out");
-const sparklingWaterSolenoid = new Gpio(23, "out");
+// const flatWaterSolenoid = new Gpio(18, "out");
+// const sparklingWaterSolenoid = new Gpio(23, "out");
 
 const socketEvents = {
   SOCKET_CONNECTION: "connection",
@@ -13,6 +13,7 @@ const socketEvents = {
 const socketActions = {
   TURN_ON_SPARKLING_WATER: "TURN_ON_SPARKLING_WATER",
   TURN_OFF_SPARKING_WATER: "TURN_OFF_SPARKING_WATER",
+
   TURN_ON_FLAT_WATER: "TURN_ON_FLAT_WATER",
   TURN_OFF_FLAT_WATER: "TURN_OFF_FLAT_WATER"
 };
@@ -38,19 +39,19 @@ module.exports = (io, logger) => {
     // Socket Action Handlers
 
     socket.on(socketActions.TURN_ON_SPARKLING_WATER, () => {
-      sparklingWaterSolenoid.writeSync(1);
+      // sparklingWaterSolenoid.writeSync(1);
     });
 
     socket.on(socketActions.TURN_OFF_SPARKING_WATER, () => {
-      sparklingWaterSolenoid.writeSync(0);
+      // sparklingWaterSolenoid.writeSync(0);
     });
 
     socket.on(socketActions.TURN_ON_FLAT_WATER, () => {
-      flatWaterSolenoid.writeSync(1);
+      // flatWaterSolenoid.writeSync(1);
     });
 
     socket.on(socketActions.TURN_OFF_FLAT_WATER, () => {
-      flatWaterSolenoid.writeSync(0);
+      // flatWaterSolenoid.writeSync(0);
     });
   });
 };

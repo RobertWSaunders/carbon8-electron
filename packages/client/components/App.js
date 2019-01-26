@@ -3,8 +3,8 @@ import { connect } from "react-redux";
 
 import { actionCreators, selectors } from "../ClientStore";
 
-const { turnOnFlatWater, turnOffFlatWater } = actionCreators;
-const { getFlatWaterStatus } = selectors;
+const { turnOnFlatWater, turnOffFlatWater, fireTest } = actionCreators;
+const { getFlatWaterStatus, getTest } = selectors;
 
 class App extends Component {
   changeState() {
@@ -15,11 +15,17 @@ class App extends Component {
     }
   }
 
+  fireThing() {
+    this.props.fireTest();
+  }
+
   render() {
     return (
       <div>
         <h1>LED Status: {`${this.props.flatWaterStatus}`}</h1>
+        <h1>{`${this.props.test}`}</h1>
         <button onClick={this.changeState.bind(this)}>Toggle LED</button>
+        <button onClick={this.fireThing.bind(this)}>Press Me</button>
       </div>
     );
   }
@@ -28,11 +34,12 @@ class App extends Component {
 function mapStateToProps(state, ownProps) {
   return {
     ...ownProps,
-    flatWaterStatus: getFlatWaterStatus(state)
+    flatWaterStatus: getFlatWaterStatus(state),
+    test: getTest(state)
   };
 }
 
 export default connect(
   mapStateToProps,
-  { turnOnFlatWater, turnOffFlatWater }
+  { turnOnFlatWater, turnOffFlatWater, fireTest }
 )(App);
