@@ -1,10 +1,9 @@
 const clientActionTypes = {};
 
 const serverSocketMiddlewareActionTypes = {
-  SERVER_SOCKET_CONNECTED:
-    "@@/client/server/socket/internal/SERVER_SOCKET_CONNECTED",
+  SERVER_SOCKET_CONNECTED: "@@/client/server/internal/SERVER_SOCKET_CONNECTED",
   SERVER_SOCKET_DISCONNECTED:
-    "@@/client/server/socket/internal/SERVER_SOCKET_DISCONNECTED",
+    "@@/client/server/internal/SERVER_SOCKET_DISCONNECTED",
 
   // Actions
 
@@ -12,7 +11,7 @@ const serverSocketMiddlewareActionTypes = {
 
   // Events
 
-  SOCKET_TEST: "@@/client/server/socket/internal/SOCKET_TEST"
+  SOCKET_TEST: "@@/client/server/internal/SOCKET_TEST"
 };
 
 export const serverSocketEventActionMap = {
@@ -21,9 +20,9 @@ export const serverSocketEventActionMap = {
 
 const hardwareSocketMiddlwareActionTypes = {
   HARDWARE_SOCKET_CONNECTED:
-    "@@/client/hardware/socket/internal/HARDWARE_SOCKET_CONNECTED",
+    "@@/client/hardware/internal/HARDWARE_SOCKET_CONNECTED",
   HARDWARE_SOCKET_DISCONNECTED:
-    "@@/client/hardware/socket/internal/HARDWARE_SOCKET_DISCONNECTED",
+    "@@/client/hardware/internal/HARDWARE_SOCKET_DISCONNECTED",
 
   // Actions
 

@@ -19,21 +19,17 @@ const socketActions = {
 };
 
 module.exports = (io, logger) => {
-  io.on(socketEvents.SOCKET_CONNECTION, (socket) => {
-    logger.info("A socket has been connected!");
+  // Connection Logic
 
-    // Socket Event Handlers
+  io.on(socketEvents.SOCKET_CONNECTION, (socket) => {
+    logger.info(
+      `A new socket with the identifier ${socket.id} has been connected!`
+    );
 
     socket.on(socketEvents.SOCKET_DISCONNECT, (reason) => {
-      logger.warn("The socket has been disconnected!");
-    });
-
-    socket.on(socketEvents.SOCKET_DISCONNECTING, (reason) => {
-      logger.warn("The socket is disconnecting!");
-    });
-
-    socket.on(socketEvents.SOCKET_ERROR, (error) => {
-      logger.error("There has been a socket error!");
+      logger.warn(
+        `The socket with the identifier ${socket.id} has been disconnected!`
+      );
     });
 
     // Socket Action Handlers
