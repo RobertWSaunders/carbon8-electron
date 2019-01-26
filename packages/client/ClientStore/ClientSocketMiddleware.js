@@ -30,7 +30,8 @@ class ClientSocketMiddleware {
   createSocketConnection() {
     this.socket = io(this.socketUri, {
       path: "/socket",
-      transports: ["websocket"]
+      transports: ["websocket"],
+      reconnection: false
     });
 
     this.socket.on("connect", () => {
@@ -54,6 +55,8 @@ class ClientSocketMiddleware {
     });
 
     this.socket.on("disconnect", () => {
+      this.socket = null;
+
       this.store.dispatch({
         type: this.socketConnectionActionTypes.disconnected
       });
