@@ -31,13 +31,14 @@ const hardwareSocketMiddlwareActionTypes = {
   TURN_ON_FLAT_WATER: "@@/client/hardware/socket/TURN_ON_FLAT_WATER",
   TURN_OFF_FLAT_WATER: "@@/client/hardware/socket/TURN_OFF_FLAT_WATER",
   TURN_ON_SPARKLING_WATER: "@@/client/hardware/socket/TURN_ON_SPARKLING_WATER",
-  TURN_OFF_SPARKING_WATER: "@@/client/hardware/socket/TURN_OFF_SPARKING_WATER",
+  TURN_OFF_SPARKLING_WATER:
+    "@@/client/hardware/socket/TURN_OFF_SPARKLING_WATER",
 
   // Events
 
-  FLAT_WATER_ON: "@@/client/hardware/internal/SPARKING_WATER_ON",
-  FLAT_WATER_OFF: "@@/client/hardware/internal/SPARKING_WATER_OFF",
-  SPARKLING_WATER_ON: "@@/client/hardware/internal/SPARKING_WATER_ON",
+  FLAT_WATER_ON: "@@/client/hardware/internal/FLAT_WATER_ON",
+  FLAT_WATER_OFF: "@@/client/hardware/internal/FLAT_WATER_OFF",
+  SPARKLING_WATER_ON: "@@/client/hardware/internal/SPARKLING_WATER_ON",
   SPARKLING_WATER_OFF: "@@/client/hardware/internal/SPARKLING_WATER_OFF"
 };
 
@@ -65,7 +66,7 @@ const invokeHardwareSocketActionCreators = {
   turnOnFlatWater: () => ({ type: actionTypes.TURN_ON_FLAT_WATER }),
   turnOffFlatWater: () => ({ type: actionTypes.TURN_OFF_FLAT_WATER }),
   turnOnSparklingWater: () => ({ type: actionTypes.TURN_ON_SPARKLING_WATER }),
-  turnOffSparklingWater: () => ({ type: actionTypes.TURN_OFF_SPARKING_WATER })
+  turnOffSparklingWater: () => ({ type: actionTypes.TURN_OFF_SPARKLING_WATER })
 };
 
 export const actionCreators = {

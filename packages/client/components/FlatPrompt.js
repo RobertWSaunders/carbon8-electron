@@ -1,8 +1,20 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 
 class FlatPrompt extends Component {
   render() {
-    return <h1>Flat Prompt</h1>;
+    return (
+      <div>
+        <h1>Flat Water Prompt</h1>
+        <p>
+          Would you like to scan your barcode in the Carbon8 app to track
+          consumption?
+        </p>
+        <Link to="/scan-code">Yes</Link>&nbsp;&nbsp;
+        <Link to="/flat-dispense">No</Link>&nbsp;&nbsp;
+        <Link to="/">Cancel</Link>
+      </div>
+    );
   }
 }
 
