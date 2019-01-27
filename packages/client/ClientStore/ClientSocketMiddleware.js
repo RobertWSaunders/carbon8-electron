@@ -1,7 +1,5 @@
 import io from "socket.io-client";
 
-const AUTHENTICATE_SOCKET_ACTION = "AUTHENTICATE";
-
 class ClientSocketMiddleware {
   constructor(opts) {
     this.store;
@@ -15,6 +13,7 @@ class ClientSocketMiddleware {
     this.middlewareActionRegex = opts.middlewareActionRegex;
     this.socketConnectionActionTypes = opts.socketConnectionActionTypes;
     this.socketAuthenticateOnConnect = opts.socketAuthenticateOnConnect;
+    this.socketAuthenticateAction = opts.socketAuthenticateAction;
   }
 
   isSocketMiddlewareAction(action) {
@@ -39,7 +38,7 @@ class ClientSocketMiddleware {
         const accessToken = this.storageAccess.getValue(this.accessTokenKey);
 
         if (accessToken) {
-          this.socket.emit(AUTHENTICATE_SOCKET_ACTION, {
+          this.socket.emit(this.socketAuthenticateAction, {
             accessToken
           });
         }

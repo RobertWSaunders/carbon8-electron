@@ -3,6 +3,8 @@ import { actionTypes } from "./ClientActions";
 export const reducerMount = "client";
 
 const initialState = {
+  isAuthenticated: false,
+
   serverSocketConnected: false,
   hardwareSocketConnected: false,
 
@@ -13,6 +15,8 @@ const initialState = {
 };
 
 export const selectors = {
+  getIsAuthenticated: (state) => state[reducerMount].isAuthenticated,
+
   getServerSocketConnected: (state) =>
     state[reducerMount].serverSocketConnected,
   getHardwareSocketConnected: (state) =>

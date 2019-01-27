@@ -7,6 +7,8 @@ const serverSocketMiddlewareActionTypes = {
 
   // Actions
 
+  AUTHENTICATE_FOUNTAIN: "@@/client/server/socket/AUTHENTICATE_FOUNTAIN",
+
   TEST_EMIT: "@@/client/server/socket/TEST_EMIT",
 
   // Events
