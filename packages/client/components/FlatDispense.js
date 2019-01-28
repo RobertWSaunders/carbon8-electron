@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 
 import { selectors, actionCreators } from "../ClientStore";
 
-const { getIsAuthenticated, getFlatWaterStatus } = selectors;
+const { getIsAuthenticated, getUser, getFlatWaterStatus } = selectors;
 const { turnOnFlatWater, turnOffFlatWater } = actionCreators;
 
 class FlatDispense extends Component {
@@ -32,8 +32,8 @@ class FlatDispense extends Component {
 
         {isAuthenticated ? (
           <p>
-            Hey user.name, enjoy the water, your consumption is being tracked in
-            the app!
+            Hey {this.props.user.firstName}, enjoy the water, your consumption
+            is being tracked in the app!
           </p>
         ) : (
           <p>Consider creating a Carbon8 account to track your consumption!</p>
@@ -51,6 +51,7 @@ class FlatDispense extends Component {
 function mapStateToProps(state, ownProps) {
   return {
     ...ownProps,
+    user: getUser(state),
     isAuthenticated: getIsAuthenticated(state),
     flatWaterStatus: getFlatWaterStatus(state)
   };

@@ -13,7 +13,7 @@ class ClientSocketMiddleware {
     this.middlewareActionRegex = opts.middlewareActionRegex;
     this.socketConnectionActionTypes = opts.socketConnectionActionTypes;
     this.socketAuthenticateOnConnect = opts.socketAuthenticateOnConnect;
-    this.socketAuthenticateAction = opts.socketAuthenticateAction;
+    this.socketAuthenticateAction = opts.socketAuthenticateAction || false;
   }
 
   isSocketMiddlewareAction(action) {
@@ -33,9 +33,11 @@ class ClientSocketMiddleware {
       reconnection: false
     });
 
-    this.socket.on("connect", () => {
+    this.socket.on("connect", async () => {
       if (this.socketAuthenticateOnConnect) {
-        const accessToken = this.storageAccess.getValue(this.accessTokenKey);
+        const accessToken = await this.storageAccess.getValue(
+          this.accessTokenKey
+        );
 
         if (accessToken) {
           this.socket.emit(this.socketAuthenticateAction, {

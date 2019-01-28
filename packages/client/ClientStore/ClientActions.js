@@ -1,4 +1,9 @@
-const clientActionTypes = {};
+const clientActionTypes = {
+  AUTHENTICATED: "@@/client/AUTHENTICATED",
+  UNAUTHENTICATED: "@@/client/UNAUTHENTICATED",
+
+  SET_USER: "@@/client/SET_USER"
+};
 
 const serverSocketMiddlewareActionTypes = {
   SERVER_SOCKET_CONNECTED: "@@/client/server/internal/SERVER_SOCKET_CONNECTED",
@@ -9,11 +14,9 @@ const serverSocketMiddlewareActionTypes = {
 
   AUTHENTICATE_FOUNTAIN: "@@/client/server/socket/AUTHENTICATE_FOUNTAIN",
 
-  TEST_EMIT: "@@/client/server/socket/TEST_EMIT",
-
   // Events
 
-  SOCKET_TEST: "@@/client/server/internal/SOCKET_TEST"
+  TRIGGER_SERVER_CONNECTION: "@@/client/server/socket/TRIGGER_CONNECTION"
 };
 
 export const serverSocketEventActionMap = {
@@ -56,10 +59,16 @@ export const actionTypes = {
   ...hardwareSocketMiddlwareActionTypes
 };
 
-const clientActionCreators = {};
+const clientActionCreators = {
+  authenticated: () => ({ type: actionTypes.AUTHENTICATED }),
+
+  setUser: (user) => ({ type: actionTypes.SET_USER, data: { user } })
+};
 
 const invokeServerSocketActionCreators = {
-  fireTest: () => ({ type: actionTypes.TEST_EMIT })
+  triggerServerConnection: () => ({
+    type: actionTypes.TRIGGER_SERVER_CONNECTION
+  })
 };
 
 const invokeHardwareSocketActionCreators = {

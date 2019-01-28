@@ -43,6 +43,7 @@
     "pretty-quick": "^1.6.0"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "react-router-dom": "^4.3.1"
   }
 }

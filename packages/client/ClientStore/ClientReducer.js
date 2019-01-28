@@ -5,17 +5,19 @@ export const reducerMount = "client";
 const initialState = {
   isAuthenticated: false,
 
+  user: null,
+
   serverSocketConnected: false,
   hardwareSocketConnected: false,
 
   flatWaterStatus: false,
-  sparklingWaterStatus: false,
-
-  test: ""
+  sparklingWaterStatus: false
 };
 
 export const selectors = {
   getIsAuthenticated: (state) => state[reducerMount].isAuthenticated,
+
+  getUser: (state) => state[reducerMount].user,
 
   getServerSocketConnected: (state) =>
     state[reducerMount].serverSocketConnected,
@@ -29,6 +31,20 @@ export const selectors = {
 };
 
 const handlers = {
+  [actionTypes.SET_USER]: (state, action) => {
+    const { user } = action.data;
+
+    return {
+      ...state,
+      user
+    };
+  },
+  [actionTypes.AUTHENTICATED]: (state, action) => {
+    return {
+      ...state,
+      isAuthenticated: true
+    };
+  },
   [actionTypes.SERVER_SOCKET_CONNECTED]: (state) => {
     return {
       ...state,
@@ -75,14 +91,6 @@ const handlers = {
     return {
       ...state,
       flatWaterStatus: false
-    };
-  },
-  [actionTypes.SOCKET_TEST]: (state, action) => {
-    const { test } = action.data;
-
-    return {
-      ...state,
-      test
     };
   }
 };

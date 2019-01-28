@@ -10,7 +10,12 @@ class SparklingPrompt extends Component {
           In order to have sparkling water you must be a subscribed Carbon8
           user. Please press Next to scan your barcode or Cancel to go back.
         </p>
-        <Link to="/scan-code">Next</Link>&nbsp;&nbsp;
+        <Link
+          to={{ pathname: "/scan-code", state: { waterType: "SPARKLING" } }}
+        >
+          Next
+        </Link>
+        &nbsp;&nbsp;
         <Link to="/">Cancel</Link>
       </div>
     );
