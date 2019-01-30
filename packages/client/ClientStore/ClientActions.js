@@ -14,6 +14,8 @@ const serverSocketMiddlewareActionTypes = {
 
   AUTHENTICATE_FOUNTAIN: "@@/client/server/socket/AUTHENTICATE_FOUNTAIN",
 
+  TEST_EMIT_MOBILE: "@@/client/server/socket/TEST_EMIT_MOBILE",
+
   // Events
 
   TRIGGER_SERVER_CONNECTION: "@@/client/server/socket/TRIGGER_CONNECTION"
@@ -68,6 +70,9 @@ const clientActionCreators = {
 const invokeServerSocketActionCreators = {
   triggerServerConnection: () => ({
     type: actionTypes.TRIGGER_SERVER_CONNECTION
+  }),
+  testMobileEmit: () => ({
+    type: actionTypes.TEST_EMIT_MOBILE
   })
 };
 

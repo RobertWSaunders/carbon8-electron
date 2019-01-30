@@ -5,11 +5,17 @@ import { connect } from "react-redux";
 import { selectors, actionCreators } from "../ClientStore";
 
 const { getIsAuthenticated, getSparklingWaterStatus } = selectors;
-const { turnOnSparklingWater, turnOffSparklingWater } = actionCreators;
+const {
+  turnOnSparklingWater,
+  turnOffSparklingWater,
+  testMobileEmit
+} = actionCreators;
 
 class SparklingDispense extends Component {
   dispenseSparklingWater() {
     const { sparklingWaterStatus } = this.props;
+
+    this.props.testMobileEmit();
 
     if (sparklingWaterStatus) {
       this.props.turnOffSparklingWater();
@@ -51,6 +57,7 @@ export default connect(
   mapStateToProps,
   {
     turnOnSparklingWater,
-    turnOffSparklingWater
+    turnOffSparklingWater,
+    testMobileEmit
   }
 )(SparklingDispense);
