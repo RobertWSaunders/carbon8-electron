@@ -3,7 +3,6 @@ import React, { Component } from "react";
 import { css } from "@emotion/core";
 
 import SparklingDispense from "./SparklingDispense";
-import FlatDispense from "./FlatDispense";
 import NotFound from "./utils/NotFound";
 import ScanCode from "./ScanCode";
 import Overview from "./Overview";
@@ -31,12 +30,6 @@ class App extends Component {
           <Switch>
             {/* Public Routes */}
             <Route path="/overview" component={Overview} type="public" />
-
-            <Route
-              path="/flat-dispense"
-              component={FlatDispense}
-              type="public"
-            />
 
             <Route path="/scan-code" component={ScanCode} type="public" />
 

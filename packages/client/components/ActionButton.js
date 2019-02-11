@@ -1,25 +1,17 @@
 import { Link } from "react-router-dom";
+import { css } from "@emotion/core";
 import React from "react";
 
 import { boxShadow, subtleBoxShadow } from "../assets/constants";
 
 const ActionButton = (props) => {
-  const roundPadding = props.inline ? "24px" : "55px";
-
-  const roundedStyles = `
-    border-radius: 28px;
-    padding: 0 ${roundPadding};
-  `;
-
-  const rectStyles = `
+  const rectStyles = css`
     border-radius: 4px;
     border: none;
     padding: 0 25px;
   `;
 
-  const height = props.inline ? "32px" : "42px";
-
-  let commonStyles = `
+  let commonStyles = css`
     box-sizing: content-box;
     height: 100px;
     cursor: pointer;
@@ -30,66 +22,54 @@ const ActionButton = (props) => {
     align-items: center;
     justify-content: center;
     font-size: 18px;
-    color: #000 !important;
-    background-color: #FFF;
+    color: #000;
+    background-color: #fff;
     border: 1px solid #000;
     box-shadow: ${subtleBoxShadow};
     transition: 0.25s ease;
     font-weight: 600;
+    :hover {
+      color: #fff;
+      background-color: #000;
+      box-shadow: ${boxShadow};
+    }
+    :active {
+      color: #fff;
+      background-color: #000;
+    }
+    :disabled {
+      background-color: #eee;
+      color: #fff !important;
+      box-shadow: none;
+      cursor: default;
+    }
+    :focus {
+      outline: 0;
+    }
   `;
 
-  // //:hover {
-  //     background-color: ${getHoverBackgroundColor()};
-  //     border: ${getHoverBorder()};
-  //     box-shadow: ${boxShadow};
-  //   }
-  //   :active {
-  //     background-color: ${getClickBackgroundColor()};
-  //     border: ${getHoverBorder()};
-  //   }
-  //   :disabled {
-  //     background-color: ${getDisabledBackgroundColor()};
-  //     border: ${getDisabledBorder()};
-  //     color: ${getDisabledForegroundColor()} !important;
-  //     box-shadow: none;
-  //     cursor: default;
-  //   }
-
-  switch (props.type) {
-    case "rounded":
-      commonStyles = `
-      ${roundedStyles}
-      ${commonStyles}
-      ${props.style || ""}
-      `;
-      break;
-    default:
-      commonStyles = `
-      ${rectStyles}
-      ${commonStyles}
-      ${props.style || ""}
-      `;
-      break;
-  }
+  commonStyles = css`
+    ${rectStyles}
+    ${commonStyles}
+    ${props.style || ""}
+  `;
 
   return props.link ? (
     <Link
-      css={`
-        ${commonStyles} display: inline-block;
+      css={css`
+        ${commonStyles}
+        display: inline-block;
         boxsizing: content-box;
         text-decoration: none !important;
       `}
       disabled={props.disabled}
       onClick={props.onClick}
       to={props.link}
-      rel={null}
-      target={null}
-      className={props.className || "actionButton"}
     >
       <div
-        css={`
-          height: ${height};
-          line-height: ${height};
+        css={css`
+          height: 100px;
+          line-height: 100px;
         `}
       >
         {props.children}
@@ -100,13 +80,14 @@ const ActionButton = (props) => {
       css={commonStyles}
       disabled={props.disabled}
       onClick={props.onClick}
-      className={props.className || "actionButton"}
+      onMouseDown={props.onMouseDown}
+      onMouseUp={props.onMouseUp}
       type="button"
     >
       <div
-        css={`
-          height: ${height};
-          line-height: ${height};
+        css={css`
+          height: 100px;
+          line-height: 100px;
         `}
       >
         {props.children}
