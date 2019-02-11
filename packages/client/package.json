@@ -13,15 +13,17 @@
   "license": "MIT",
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
+    "@emotion/babel-preset-css-prop": "^10.0.7",
+    "@emotion/core": "^10.0.7",
+    "axios": "^0.18.0",
     "dotenv": "^6.0.0",
-    "emotion": "^9.2.12",
+    "emotion": "^10.0.7",
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
     "react-redux": "^6.0.0",
     "react-router-dom": "^4.2.2",
     "redux": "^4.0.1",
-    "socket.io-client": "^2.2.0",
-    "axios": "^0.18.0"
+    "socket.io-client": "^2.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.1.6",
