@@ -1,9 +1,8 @@
-require("dotenv").config();
-
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const Dotenv = require("dotenv-webpack");
 const webpack = require("webpack");
 const path = require("path");
 
@@ -16,8 +15,6 @@ if (isProd) {
 } else {
   console.log("Running development build!"); // eslint-disable-line no-console
 }
-
-const { DEV_PROXY } = process.env;
 
 const CLIENT_DIR = path.resolve(__dirname, "./");
 const CLIENT_ENTRY = path.resolve(CLIENT_DIR, "Client.js");
@@ -73,6 +70,7 @@ module.exports = {
     ]
   },
   plugins: [
+    new Dotenv(),
     new MiniCssExtractPlugin({
       filename: !isProd ? "[name].css" : "[name].[hash].css",
       chunkFilename: !isProd ? "[id].css" : "[id].[hash].css"
@@ -100,13 +98,7 @@ module.exports = {
       disableDotRule: true,
       index: "/"
     },
-    compress: true,
-    proxy: {
-      "/api": {
-        target: DEV_PROXY,
-        changeOrigin: true
-      }
-    }
+    compress: true
   },
   devtool: isProd ? "source-map" : "cheap-eval-source-map"
 };

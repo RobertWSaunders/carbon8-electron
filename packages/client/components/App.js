@@ -2,8 +2,8 @@ import { Switch } from "react-router-dom";
 import React, { Component } from "react";
 import { css } from "@emotion/core";
 
-import SparklingDispense from "./SparklingDispense";
 import NotFound from "./utils/NotFound";
+import Dispense from "./Dispense";
 import ScanCode from "./ScanCode";
 import Overview from "./Overview";
 import Route from "./utils/Route";
@@ -34,11 +34,7 @@ class App extends Component {
             <Route path="/scan-code" component={ScanCode} type="public" />
 
             {/*Private Routes */}
-            <Route
-              path="/sparkling-dispense"
-              component={SparklingDispense}
-              type="private"
-            />
+            <Route path="/dispense" component={Dispense} type="private" />
 
             {/* Catch all routes */}
             <Route path="*" component={NotFound} />

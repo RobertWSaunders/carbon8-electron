@@ -2,10 +2,10 @@ import IosSettings from "react-ionicons/lib/IosSettings";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { css } from "@emotion/core";
-import Modal from "react-modal";
 
 import FountainStatisticCard from "./FountainStatisticCard";
 import { selectors, actionCreators } from "../ClientStore";
+import FountainInfoModal from "./FountainInfoModal";
 import ActionButton from "./ActionButton";
 
 const { turnOnFlatWater, turnOffFlatWater } = actionCreators;
@@ -28,11 +28,15 @@ class Overview extends Component {
     this.setState({ fountainInfoModalOpen: false });
   }
 
-  handleFlatWaterDown() {
+  handleFlatWaterDown(e) {
+    e.preventDefault();
+
     this.props.turnOnFlatWater();
   }
 
-  handleFlatWaterUp() {
+  handleFlatWaterUp(e) {
+    e.preventDefault();
+
     this.props.turnOffFlatWater();
   }
 
@@ -196,17 +200,14 @@ class Overview extends Component {
     );
   }
 
-  renderModal() {
+  renderFountainInfoModal() {
     const { fountainInfoModalOpen } = this.state;
 
     return (
-      <Modal
-        isOpen={fountainInfoModalOpen}
-        onRequestClose={this.closeFountainInfoModal.bind(this)}
-        ariaHideApp={false}
-      >
-        <button onClick={this.closeFountainInfoModal.bind(this)}>close</button>
-      </Modal>
+      <FountainInfoModal
+        modalOpen={fountainInfoModalOpen}
+        handleModalClose={this.closeFountainInfoModal.bind(this)}
+      />
     );
   }
 
@@ -217,7 +218,7 @@ class Overview extends Component {
         {this.renderInstructionText()}
         {this.renderButtons()}
         {this.renderFountainStatistics()}
-        {this.renderModal()}
+        {this.renderFountainInfoModal()}
       </div>
     );
   }

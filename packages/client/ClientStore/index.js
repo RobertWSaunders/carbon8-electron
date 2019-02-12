@@ -14,9 +14,6 @@ const HARDWARE_SOCKET_URI =
 const SERVER_SOCKET_URI =
   process.env.SERVER_SOCKET_URI || "http://localhost:3001";
 
-export const FOUNTAIN_ACCESS_TOKEN_LOCAL_STORAGE_KEY =
-  "CARBON8_FOUNTAIN_ACCESS_TOKEN";
-
 const storageAccess = {
   getValue: (key) => Promise.resolve(localStorage.getItem(key)),
   setValue: (key, value) => Promise.resolve(localStorage.setItem(key, value)),
@@ -44,7 +41,7 @@ const serverSocketMiddleware = createSocketMiddleware({
   },
   socketEventActionMap: serverSocketEventActionMap,
   socketAuthenticateOnConnect: true,
-  accessTokenKey: FOUNTAIN_ACCESS_TOKEN_LOCAL_STORAGE_KEY,
+  accessTokenKey: process.env.FOUNTAIN_ACCESS_TOKEN_LOCAL_STORAGE_KEY,
   socketAuthenticateAction: "AUTHENTICATE_FOUNTAIN",
   storageAccess
 });
