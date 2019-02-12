@@ -16,6 +16,10 @@ class App extends Component {
           * {
             font-family: "Open Sans", sans-serif !important;
           }
+          html,
+          body {
+            overflow: hidden;
+          }
         `}
       >
         <div

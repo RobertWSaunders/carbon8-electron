@@ -255,8 +255,9 @@ class ScanCode extends Component {
   render() {
     const { toDispense, countdown, scanErrorToOverview } = this.state;
 
-    if (countdown === 0 || scanErrorToOverview)
+    if (countdown === 0 || scanErrorToOverview) {
       return <Redirect to="/overview" />;
+    }
     if (toDispense) return <Redirect to="/dispense" />;
 
     return (
