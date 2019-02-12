@@ -19,14 +19,15 @@ class App extends Component {
           html,
           body {
             overflow: hidden;
+            cursor: none !important;
           }
         `}
       >
         <div
           css={css`
             box-sizing: border-box;
-            height: 480px;
-            width: 800px;
+            height: 440px;
+            width: 780px;
             padding: 0;
             margin: 0;
           `}

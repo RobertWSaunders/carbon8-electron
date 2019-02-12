@@ -6,7 +6,7 @@ export default (props) => (
   <div
     css={css`
       height: 100px;
-      flex: 0 0 220px;
+      width: 200px;
       margin: 0 20px 0 20px;
       border-style: solid;
       border-bottom: 0px;

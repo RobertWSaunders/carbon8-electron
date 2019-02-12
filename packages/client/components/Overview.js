@@ -151,7 +151,7 @@ class Overview extends Component {
         css={css`
           bottom: 0;
           position: absolute;
-          width: 100%;
+          width: 780px;
         `}
       >
         <hr
