@@ -1,39 +1,238 @@
+import { Redirect } from "react-router-dom";
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import { connect } from "react-redux";
+import { css } from "@emotion/core";
 
 import { selectors, actionCreators } from "../ClientStore";
+import ActionButton from "./ActionButton";
+import { throws } from "assert";
 
-const { getIsAuthenticated, getSparklingWaterStatus } = selectors;
-const { turnOnSparklingWater, turnOffSparklingWater } = actionCreators;
+const {
+  turnOnSparklingWater,
+  turnOffSparklingWater,
+  turnOnFlatWater,
+  turnOffFlatWater
+} = actionCreators;
+const { getFlatWaterStatus, getSparklingWaterStatus, getUser } = selectors;
+
+const TIMEOUT_DELAY = 15;
 
 class Dispense extends Component {
-  dispenseSparklingWater() {
-    const { sparklingWaterStatus } = this.props;
+  constructor(props) {
+    super(props);
 
-    if (sparklingWaterStatus) {
-      this.props.turnOffSparklingWater();
-    } else {
-      this.props.turnOnSparklingWater();
-    }
+    this.state = {
+      countdown: TIMEOUT_DELAY,
+      showCountdown: true
+    };
   }
 
-  render() {
-    const { sparklingWaterStatus } = this.props;
+  componentDidMount() {
+    this.setCountdownInterval();
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.countdownInterval);
+  }
+
+  setCountdownInterval() {
+    this.setState({
+      showCountdown: true
+    });
+
+    this.countdownInterval = setInterval(() => {
+      this.setState({ countdown: this.state.countdown - 1 });
+    }, 1000);
+  }
+
+  clearCountdownIntervalAndHide() {
+    clearInterval(this.countdownInterval);
+
+    this.setState({
+      showCountdown: false,
+      countdown: TIMEOUT_DELAY
+    });
+  }
+
+  handleFlatWaterDown() {
+    this.clearCountdownIntervalAndHide();
+
+    this.props.turnOnFlatWater();
+  }
+
+  handleFlatWaterUp() {
+    this.setCountdownInterval();
+
+    this.props.turnOffFlatWater();
+  }
+
+  handleSparklingWaterDown() {
+    this.clearCountdownIntervalAndHide();
+
+    this.props.turnOnSparklingWater();
+  }
+
+  handleSparklingWaterUp() {
+    this.setCountdownInterval();
+
+    this.props.turnOffSparklingWater();
+  }
+
+  renderLogoHeader() {
+    const { showCountdown } = this.state;
+
+    return (
+      <div
+        css={css`
+          margin-top: 20px;
+          width: 100%;
+          height: 50px;
+        `}
+      >
+        <div
+          css={`
+            float: right;
+            width: 200px;
+            text-align: right;
+            height: 50px;
+          `}
+        >
+          <div
+            css={`
+              float: right;
+              width: 200px;
+              text-align: right;
+              height: 50px;
+            `}
+          >
+            {showCountdown ? (
+              <div
+                css={css`
+                  width: 30px;
+                  height: 30px;
+                  border-radius: 15px;
+                  font-size: 18px;
+                  color: #000;
+                  line-height: 30px;
+                  text-align: center;
+                  border: 1px solid #000;
+                  float: right;
+                  margin-right: 30px;
+                  margin-top: 10px;
+                `}
+              >
+                {this.state.countdown}
+              </div>
+            ) : null}
+          </div>
+        </div>
+        <div
+          css={`
+            float: left;
+            width: 200px;
+            height: 50px;
+          `}
+        />
+        <div
+          css={`
+            margin: 0px auto 0 auto;
+            text-align: center;
+          `}
+        >
+          <img
+            css={css`
+              width: auto;
+              height: 50px;
+            `}
+            src={require("../assets/carbon8WordmarkLogoBlack.png")}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  renderInstructionText() {
+    const { user } = this.props;
+
+    return (
+      <div
+        css={css`
+          margin: 0 auto;
+          width: 520px;
+        `}
+      >
+        <p
+          css={css`
+            font-size: 18px;
+            text-align: center;
+          `}
+        >
+          Enjoy that water{user ? ` ${user.firstName}` : null}! Press and hold a
+          button below to dispense your water, your consumption will be tracked
+          in the app.
+        </p>
+      </div>
+    );
+  }
+
+  renderButtons() {
+    const { user } = this.props;
+
+    let subscribed = false;
+
+    if (user) {
+      subscribed = user.subscribed;
+    }
 
     return (
       <div>
-        <h1>Sparkling Water Dispense</h1>
-        <p>Press the button below to dispense your sparkling water:</p>
+        <div
+          css={`
+            text-align: center;
+            margin-bottom: 30px;
+            margin-top: 90px;
+          `}
+        >
+          <ActionButton
+            style="margin-right: 90px;"
+            onMouseDown={this.handleFlatWaterDown.bind(this)}
+            onMouseUp={this.handleFlatWaterUp.bind(this)}
+          >
+            Flat Water
+          </ActionButton>
+          <ActionButton
+            onMouseDown={this.handleSparklingWaterDown.bind(this)}
+            onMouseUp={this.handleSparklingWaterUp.bind(this)}
+          >
+            Sparkling Water
+          </ActionButton>
+        </div>
+        {!subscribed ? (
+          <div
+            css={`
+              text-align: center;
+              margin-right: 125px;
+              width: 200px;
+              float: right;
+            `}
+          >
+            <p>Consider subscribing to access sparkling water!</p>
+          </div>
+        ) : null}
+      </div>
+    );
+  }
 
-        <button onClick={this.dispenseSparklingWater.bind(this)}>
-          {sparklingWaterStatus ? "Stop" : "Dispense"}
-        </button>
+  render() {
+    const { countdown } = this.state;
 
-        <br />
-        <br />
+    if (countdown === 0) return <Redirect to="/overview" />;
 
-        <Link to="/">Done</Link>
+    return (
+      <div>
+        {this.renderLogoHeader()}
+        {this.renderInstructionText()}
+        {this.renderButtons()}
       </div>
     );
   }
@@ -42,8 +241,9 @@ class Dispense extends Component {
 function mapStateToProps(state, ownProps) {
   return {
     ...ownProps,
-    isAuthenticated: getIsAuthenticated(state),
-    sparklingWaterStatus: getSparklingWaterStatus(state)
+    sparklingWaterStatus: getSparklingWaterStatus(state),
+    flatWaterStatus: getFlatWaterStatus(state),
+    user: getUser(state)
   };
 }
 
@@ -51,6 +251,8 @@ export default connect(
   mapStateToProps,
   {
     turnOnSparklingWater,
-    turnOffSparklingWater
+    turnOffSparklingWater,
+    turnOnFlatWater,
+    turnOffFlatWater
   }
 )(Dispense);

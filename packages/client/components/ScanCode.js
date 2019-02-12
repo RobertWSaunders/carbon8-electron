@@ -6,10 +6,9 @@ import { connect } from "react-redux";
 import { css } from "@emotion/core";
 import axios from "axios";
 
-import { actionCreators, selectors } from "../ClientStore";
+import { actionCreators } from "../ClientStore";
 
-const { setUser, authenticated, triggerServerConnection } = actionCreators;
-const { getUser } = selectors;
+const { setUser, authenticate, triggerServerConnection } = actionCreators;
 
 class ScanCode extends Component {
   constructor(props) {
@@ -18,36 +17,58 @@ class ScanCode extends Component {
     this.state = {
       scanCode: "",
       toDispense: false,
-      waitingScan: true,
-      countdown: 30
+      loader: true,
+      loaderTitle: "Waiting for scan...",
+      countdown: 30,
+      scanCodeTextInputDisabled: false,
+      showCountdown: true,
+      scanError: false,
+      scanErrorToOverview: false
     };
+
+    this.scanCodeTextInput = React.createRef();
   }
 
   componentDidMount() {
-    setInterval(() => {
+    this.scanCodeTextInput.current.focus();
+
+    this.countdownInterval = setInterval(() => {
       this.setState({ countdown: this.state.countdown - 1 });
     }, 1000);
   }
 
-  handleChange(e) {
-    this.setState({ scanCode: e.target.value });
+  componentWillUnmount() {
+    clearInterval(this.countdownInterval);
   }
 
-  async handleSubmit(e) {
-    e.preventDefault();
+  handleScanCodeTextInputChange(e) {
+    this.setState({ scanCode: e.target.value });
 
+    if (this.state.scanCode.length === 11) {
+      clearInterval(this.countdownInterval);
+
+      this.setState({
+        countdown: 30,
+        scanCodeTextInputDisabled: true,
+        showCountdown: false,
+        loaderTitle: "Checking scan code..."
+      });
+
+      this.handleScan();
+    }
+  }
+
+  async handleScan() {
     const { scanCode } = this.state;
 
     try {
       const res = await axios.post(
-        "http://localhost:3001/auth/sessionFromScanCode",
+        `${process.env.SERVER_SOCKET_URI}/api/auth/sessionFromScanCode`,
         {
           scanCode,
-          fountainId: "be057b58-3012-4fea-8697-2a22cbf04cc7"
+          fountainId: process.env.FOUNTAIN_UNIQUE_IDENTIFIER
         }
       );
-
-      this.props.authenticated();
 
       const { user, fountainAccessToken } = res.data;
 
@@ -56,17 +77,29 @@ class ScanCode extends Component {
         fountainAccessToken
       );
 
-      this.props.setUser(user);
+      this.props.authenticate({
+        user
+      });
 
       this.props.triggerServerConnection();
 
       this.setState({ toDispense: true });
     } catch (err) {
-      console.log(err.response);
+      this.setState({
+        scanError: true
+      });
+
+      setTimeout(() => {
+        this.setState({
+          scanErrorToOverview: true
+        });
+      }, 3000);
     }
   }
 
   renderLogoHeader() {
+    const { showCountdown } = this.state;
+
     return (
       <div
         css={css`
@@ -82,7 +115,27 @@ class ScanCode extends Component {
             text-align: right;
             height: 50px;
           `}
-        />
+        >
+          {showCountdown ? (
+            <div
+              css={css`
+                width: 30px;
+                height: 30px;
+                border-radius: 15px;
+                font-size: 18px;
+                color: #000;
+                line-height: 30px;
+                text-align: center;
+                border: 1px solid #000;
+                float: right;
+                margin-right: 30px;
+                margin-top: 10px;
+              `}
+            >
+              {this.state.countdown}
+            </div>
+          ) : null}
+        </div>
         <div
           css={`
             float: left;
@@ -138,64 +191,90 @@ class ScanCode extends Component {
     );
   }
 
-  render() {
-    const { toDispense, countdown } = this.state;
+  renderScanSpinner() {
+    const { scanError } = this.state;
 
-    if (countdown === 0) return <Redirect to="/overview" />;
+    return (
+      <div
+        css={css`
+          width: ${!scanError ? "230px" : "300px"};
+          margin: ${!scanError ? "130px auto" : "90px auto"};
+          text-align: center;
+        `}
+      >
+        {!scanError ? (
+          <div>
+            <BarLoader
+              width={230}
+              sizeUnit={"px"}
+              color={"#000"}
+              loading={this.state.loader}
+            />
+            <p
+              css={css`
+                font-size: 18px;
+              `}
+            >
+              {this.state.loaderTitle}
+            </p>
+          </div>
+        ) : (
+          <div>
+            <img src={require("../assets/errorCircle.svg")} height={80} />
+            <p
+              css={css`
+                font-size: 18px;
+              `}
+            >
+              The scan code provided is invalid!
+            </p>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  renderHiddenInput() {
+    return (
+      <input
+        type="text"
+        value={this.state.scanCode}
+        onChange={this.handleScanCodeTextInputChange.bind(this)}
+        ref={this.scanCodeTextInput}
+        disabled={this.state.scanCodeTextInputDisabled}
+        css={css`
+          opacity: 0;
+          :focus {
+            outline: none;
+          }
+        `}
+      />
+    );
+  }
+
+  render() {
+    const { toDispense, countdown, scanErrorToOverview } = this.state;
+
+    if (countdown === 0 || scanErrorToOverview)
+      return <Redirect to="/overview" />;
     if (toDispense) return <Redirect to="/dispense" />;
 
     return (
       <div>
         {this.renderLogoHeader()}
         {this.renderInstructionText()}
-        <div
-          css={css`
-            width: 230px;
-            margin: 130px auto;
-            text-align: center;
-          `}
-        >
-          <BarLoader
-            width={230}
-            sizeUnit={"px"}
-            color={"#000"}
-            loading={this.state.waitingScan}
-          />
-          <p
-            css={css`
-              font-size: 18px;
-            `}
-          >
-            Waiting for scan...
-          </p>
-        </div>
-
-        {/* <form onSubmit={this.handleSubmit.bind(this)}>
-          <label>Scan Code:</label>&nbsp;
-          <input
-            type="text"
-            value={this.state.scanCode}
-            onChange={this.handleChange.bind(this)}
-          />
-          <input type="submit" value="Submit" />
-        </form> */}
+        {this.renderScanSpinner()}
+        {this.renderHiddenInput()}
       </div>
     );
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  return {
-    ...ownProps,
-    user: getUser(state)
-  };
-}
-
 export default connect(
-  mapStateToProps,
+  null,
   {
     setUser,
-    authenticated,
+    authenticate,
     triggerServerConnection
   }
 )(ScanCode);

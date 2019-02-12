@@ -33,10 +33,6 @@ const ActionButton = (props) => {
       background-color: #000;
       box-shadow: ${boxShadow};
     }
-    :active {
-      color: #fff;
-      background-color: #000;
-    }
     :disabled {
       background-color: #eee;
       color: #fff !important;

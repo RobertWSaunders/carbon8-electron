@@ -3,7 +3,7 @@ import { actionTypes } from "./ClientActions";
 export const reducerMount = "client";
 
 const initialState = {
-  isAuthenticated: false,
+  authenticated: false,
 
   user: null,
 
@@ -15,7 +15,7 @@ const initialState = {
 };
 
 export const selectors = {
-  getIsAuthenticated: (state) => state[reducerMount].isAuthenticated,
+  getAuthenticated: (state) => state[reducerMount].authenticated,
 
   getUser: (state) => state[reducerMount].user,
 
@@ -39,10 +39,18 @@ const handlers = {
       user
     };
   },
-  [actionTypes.AUTHENTICATED]: (state, action) => {
+  [actionTypes.AUTHENTICATE]: (state, action) => {
+    const { user } = action.data.authInfo;
+
     return {
       ...state,
-      isAuthenticated: true
+      user,
+      authenticated: true
+    };
+  },
+  [actionTypes.UNAUTHENTICATE]: (state) => {
+    return {
+      ...initialState
     };
   },
   [actionTypes.SERVER_SOCKET_CONNECTED]: (state) => {

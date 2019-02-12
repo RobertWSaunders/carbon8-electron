@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 
 import { selectors } from "../../ClientStore";
 
-const { getIsAuthenticated } = selectors;
+const { getAuthenticated } = selectors;
 
 const Route = ({ component: ComposedComponent, type, ...rest }) => {
   class Authentication extends Component {
@@ -42,7 +42,7 @@ const Route = ({ component: ComposedComponent, type, ...rest }) => {
   function mapStateToProps(state, ownProps) {
     return {
       ...ownProps,
-      isAuthenticated: getIsAuthenticated(state)
+      isAuthenticated: getAuthenticated(state)
     };
   }
 

@@ -29,6 +29,7 @@ const hardwareSocketMiddleware = createSocketMiddleware({
   },
   socketEventActionMap: hardwareSocketEventActionMap,
   socketAuthenticateOnConnect: false,
+  socketDisconnectAction: "TRIGGER_HARDWARE_DISCONNECTION",
   storageAccess
 });
 
@@ -43,6 +44,7 @@ const serverSocketMiddleware = createSocketMiddleware({
   socketAuthenticateOnConnect: true,
   accessTokenKey: process.env.FOUNTAIN_ACCESS_TOKEN_LOCAL_STORAGE_KEY,
   socketAuthenticateAction: "AUTHENTICATE_FOUNTAIN",
+  socketDisconnectAction: "TRIGGER_SERVER_DISCONNECTION",
   storageAccess
 });
 

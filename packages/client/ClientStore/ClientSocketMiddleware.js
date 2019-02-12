@@ -14,6 +14,7 @@ class ClientSocketMiddleware {
     this.socketConnectionActionTypes = opts.socketConnectionActionTypes;
     this.socketAuthenticateOnConnect = opts.socketAuthenticateOnConnect;
     this.socketAuthenticateAction = opts.socketAuthenticateAction || false;
+    this.socketDisconnectAction = opts.socketDisconnectAction;
   }
 
   isSocketMiddlewareAction(action) {
@@ -80,7 +81,13 @@ class ClientSocketMiddleware {
       return this.createSocketConnection();
     }
 
-    this.socket.emit(this.getSocketActionFromReduxAction(action));
+    const socketAction = this.getSocketActionFromReduxAction(action);
+
+    if (socketAction === this.socketDisconnectAction) {
+      this.socket.disconnect();
+    } else {
+      this.socket.emit(socketAction);
+    }
   }
 
   socketMiddleware() {

@@ -8,7 +8,12 @@ import { selectors, actionCreators } from "../ClientStore";
 import FountainInfoModal from "./FountainInfoModal";
 import ActionButton from "./ActionButton";
 
-const { turnOnFlatWater, turnOffFlatWater } = actionCreators;
+const {
+  turnOnFlatWater,
+  turnOffFlatWater,
+  unauthenticate,
+  triggerServerDisconnection
+} = actionCreators;
 const { getFlatWaterStatus } = selectors;
 
 class Overview extends Component {
@@ -20,6 +25,16 @@ class Overview extends Component {
     };
   }
 
+  async componentDidMount() {
+    await localStorage.removeItem(
+      process.env.FOUNTAIN_ACCESS_TOKEN_LOCAL_STORAGE_KEY
+    );
+
+    this.props.unauthenticate();
+
+    this.props.triggerServerDisconnection();
+  }
+
   openFountainInfoModal() {
     this.setState({ fountainInfoModalOpen: true });
   }
@@ -29,14 +44,10 @@ class Overview extends Component {
   }
 
   handleFlatWaterDown(e) {
-    e.preventDefault();
-
     this.props.turnOnFlatWater();
   }
 
   handleFlatWaterUp(e) {
-    e.preventDefault();
-
     this.props.turnOffFlatWater();
   }
 
@@ -119,7 +130,7 @@ class Overview extends Component {
         css={`
           text-align: center;
           margin-bottom: 30px;
-          margin-top: 38px;
+          margin-top: 42px;
         `}
       >
         <ActionButton
@@ -233,5 +244,10 @@ function mapStateToProps(state, ownProps) {
 
 export default connect(
   mapStateToProps,
-  { turnOnFlatWater, turnOffFlatWater }
+  {
+    turnOnFlatWater,
+    turnOffFlatWater,
+    unauthenticate,
+    triggerServerDisconnection
+  }
 )(Overview);
