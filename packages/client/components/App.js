@@ -15,11 +15,11 @@ class App extends Component {
         css={css`
           * {
             font-family: "Open Sans", sans-serif !important;
+            cursor: none !important;
           }
           html,
           body {
             overflow: hidden;
-            cursor: none !important;
           }
         `}
       >
