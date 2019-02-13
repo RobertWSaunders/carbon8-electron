@@ -22,7 +22,9 @@ class Dispense extends Component {
 
     this.state = {
       countdown: TIMEOUT_DELAY,
-      showCountdown: true
+      showCountdown: true,
+      sparklingPressed: false,
+      flatPressed: false
     };
   }
 
@@ -54,25 +56,45 @@ class Dispense extends Component {
   }
 
   handleFlatWaterDown() {
-    this.clearCountdownIntervalAndHide();
+    if (!this.state.sparklingPressed) {
+      this.clearCountdownIntervalAndHide();
 
-    this.props.turnOnFlatWater();
+      this.setState({
+        flatPressed: true
+      });
+
+      this.props.turnOnFlatWater();
+    }
   }
 
   handleFlatWaterUp() {
     this.setCountdownInterval();
 
+    this.setState({
+      flatPressed: false
+    });
+
     this.props.turnOffFlatWater();
   }
 
   handleSparklingWaterDown() {
-    this.clearCountdownIntervalAndHide();
+    if (!this.state.flatPressed) {
+      this.clearCountdownIntervalAndHide();
 
-    this.props.turnOnSparklingWater();
+      this.setState({
+        sparklingPressed: true
+      });
+
+      this.props.turnOnSparklingWater();
+    }
   }
 
   handleSparklingWaterUp() {
     this.setCountdownInterval();
+
+    this.setState({
+      sparklingPressed: false
+    });
 
     this.props.turnOffSparklingWater();
   }
@@ -157,7 +179,7 @@ class Dispense extends Component {
       <div
         css={css`
           margin: 0 auto;
-          width: 520px;
+          width: 600px;
         `}
       >
         <p
@@ -189,7 +211,7 @@ class Dispense extends Component {
           css={`
             text-align: center;
             margin-bottom: 30px;
-            margin-top: 90px;
+            margin-top: 80px;
           `}
         >
           <ActionButton

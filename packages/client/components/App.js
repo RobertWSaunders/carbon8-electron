@@ -16,13 +16,11 @@ class App extends Component {
           * {
             font-family: "Open Sans", sans-serif !important;
             cursor: none !important;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
           }
           html,
           body {
+            -webkit-user-select: none;
+            user-select: none;
             overflow: hidden;
           }
         `}

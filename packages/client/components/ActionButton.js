@@ -59,7 +59,7 @@ const ActionButton = (props) => {
         text-decoration: none !important;
       `}
       disabled={props.disabled}
-      onClick={props.onClick}
+      onClick={!props.disabled ? props.onClick : null}
       to={props.link}
     >
       <div
@@ -75,11 +75,11 @@ const ActionButton = (props) => {
     <button
       css={commonStyles}
       disabled={props.disabled}
-      onClick={props.onClick}
-      onMouseDown={props.onMouseDown}
-      onMouseUp={props.onMouseUp}
-      onTouchStart={props.onTouchStart}
-      onTouchEnd={props.onTouchEnd}
+      onClick={props.disabled ? props.onClick : null}
+      onMouseDown={!props.disabled ? props.onMouseDown : null}
+      onMouseUp={!props.disabled ? props.onMouseUp : null}
+      onTouchStart={!props.disabled ? props.onTouchStart : null}
+      onTouchEnd={!props.disabled ? props.onTouchEnd : null}
       type="button"
     >
       <div

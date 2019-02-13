@@ -91,7 +91,7 @@ class ScanCode extends Component {
         this.setState({
           toDispense: true
         });
-      }, 2000);
+      }, 3000);
     } catch (err) {
       this.setState({
         scanError: true
