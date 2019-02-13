@@ -61,7 +61,7 @@ class ScanCode extends Component {
   handleScanCodeTextInputChange(e) {
     this.setState({ scanCode: e.target.value });
 
-    if (this.state.scanCode.length === 11) {
+    if (this.state.scanCode.length >= 11) {
       clearInterval(this.countdownInterval);
 
       this.setState({
@@ -209,6 +209,7 @@ class ScanCode extends Component {
           `}
         >
           Please scan your barcode in the place provided.
+          {this.props.codeFromScanner}
         </p>
       </div>
     );

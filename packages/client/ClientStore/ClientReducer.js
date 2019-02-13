@@ -114,14 +114,12 @@ const handlers = {
     };
   },
   [actionTypes.FOUNTAIN_BARCODE_SCAN_COMPLETE]: (state, action) => {
-    const { data } = action;
-
-    console.log("DATA", data);
+    const { scanCode } = action.data;
 
     return {
       ...state,
       scannerReady: false,
-      codeFromScanner: data
+      codeFromScanner: scanCode
     };
   }
 };

@@ -6,15 +6,14 @@ import socketio
 import datetime
 import imutils
 import time
-import cv2
 
 # create socketio client
 sio = socketio.Client(logger=True, engineio_logger=True)
 
-vs = VideoStream(usePiCamera=True)
+global vs
 
-def deactivateScanner()
-  cv2.destroyAllWindows()
+def deactivateScanner():
+  global vs
   vs.stop()
 
 # socket connection handler
@@ -24,11 +23,12 @@ def on_connect():
 
 # scan barcode event handler
 @sio.on('ACTIVATE_BARCODE_SCANNER')
-def on_message(data):
+def on_message():
   print("[INFO] Activating the barcode scanner.")
 
+  global vs
   # start video stream on rpi camera module
-  vs.start()
+  vs = VideoStream(usePiCamera=True).start()
   # sleep to wait for boot up
   time.sleep(2.0)
 
@@ -44,14 +44,15 @@ def on_message(data):
     for barcode in barcodes:
       barcodeData = barcode.data.decode("utf-8")
 
-      if barcodeData not in found:
+      if barcodeData:
         print("[INFO] Found barcode with the value: {}".format(barcodeData))
         sio.emit('BARCODE_SCAN_COMPLETE', barcodeData)
+        deactivateScanner()
         active = False
 
 # scan barcode event handler
 @sio.on('DEACTIVATE_BARCODE_SCANNER')
-def on_message(data):
+def on_message():
   print("[INFO] Deactivating the barcode scanner.")
   deactivateScanner()
 

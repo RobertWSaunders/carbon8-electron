@@ -63,10 +63,12 @@ module.exports = (io, logger) => {
     // From Fountain
 
     socket.on(socketActions.ACTIVATE_BARCODE_SCANNER, () => {
+      console.log("Activating barcode scanner!");
       socket.broadcast.emit(socketEvents.ACTIVATE_BARCODE_SCANNER);
     });
 
     socket.on(socketActions.DEACTIVATE_BARCODE_SCANNER, () => {
+      console.log("Deactivating barcode scanner!");
       socket.broadcast.emit(socketEvents.DEACTIVATE_BARCODE_SCANNER);
     });
 
@@ -105,15 +107,21 @@ module.exports = (io, logger) => {
     // From Python Barcode Scanner
 
     socket.on(socketActions.BARCODE_SCANNER_READY, () => {
+      console.log("Barcode scanner is ready!");
+
       socket.broadcast.send({
         type: socketEvents.FOUNTAIN_BARCODE_SCANNER_READY
       });
     });
 
-    socket.on(socketActions.BARCODE_SCAN_COMPLETE, (data) => {
+    socket.on(socketActions.BARCODE_SCAN_COMPLETE, (scanCode) => {
+      console.log("Barcode scan complete!");
+
       socket.broadcast.send({
         type: socketEvents.FOUNTAIN_BARCODE_SCAN_COMPLETE,
-        data
+        data: {
+          scanCode
+        }
       });
     });
   });
