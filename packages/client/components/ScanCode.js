@@ -8,8 +8,21 @@ import axios from "axios";
 
 import { actionCreators, selectors } from "../ClientStore";
 
-const { setUser, authenticate, triggerServerConnection } = actionCreators;
-const { getUser, getServerSocketConnected, getAuthenticated } = selectors;
+const {
+  setUser,
+  authenticate,
+  activateBarcodeScanner,
+  triggerServerConnection,
+  deactivateBarcodeScanner
+} = actionCreators;
+
+const {
+  getUser,
+  getScannerReady,
+  getAuthenticated,
+  getCodeFromScanner,
+  getServerSocketConnected
+} = selectors;
 
 class ScanCode extends Component {
   constructor(props) {
@@ -32,7 +45,7 @@ class ScanCode extends Component {
   }
 
   componentDidMount() {
-    this.scanCodeTextInput.current.focus();
+    this.props.activateBarcodeScanner();
 
     this.countdownInterval = setInterval(() => {
       this.setState({ countdown: this.state.countdown - 1 });
@@ -40,6 +53,8 @@ class ScanCode extends Component {
   }
 
   componentWillUnmount() {
+    this.props.deactivateBarcodeScanner();
+
     clearInterval(this.countdownInterval);
   }
 
@@ -265,7 +280,7 @@ class ScanCode extends Component {
     return (
       <input
         type="text"
-        value={this.state.scanCode}
+        value={this.props.codeFromScanner}
         onChange={this.handleScanCodeTextInputChange.bind(this)}
         ref={this.scanCodeTextInput}
         disabled={this.state.scanCodeTextInputDisabled}
@@ -306,7 +321,9 @@ function mapStateToProps(state, ownProps) {
     ...ownProps,
     user: getUser(state),
     authenticated: getAuthenticated(state),
-    serverSocketConnected: getServerSocketConnected(state)
+    serverSocketConnected: getServerSocketConnected(state),
+    scannerReady: getScannerReady(state),
+    codeFromScanner: getCodeFromScanner(state)
   };
 }
 
@@ -315,6 +332,8 @@ export default connect(
   {
     setUser,
     authenticate,
+    activateBarcodeScanner,
+    deactivateBarcodeScanner,
     triggerServerConnection
   }
 )(ScanCode);

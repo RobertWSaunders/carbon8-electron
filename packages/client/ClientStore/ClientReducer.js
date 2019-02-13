@@ -11,7 +11,10 @@ const initialState = {
   hardwareSocketConnected: false,
 
   flatWaterStatus: false,
-  sparklingWaterStatus: false
+  sparklingWaterStatus: false,
+
+  scannerReady: false,
+  codeFromScanner: ""
 };
 
 export const selectors = {
@@ -26,6 +29,9 @@ export const selectors = {
 
   getFlatWaterStatus: (state) => state[reducerMount].flatWaterStatus,
   getSparklingWaterStatus: (state) => state[reducerMount].sparklingWaterStatus,
+
+  getScannerReady: (state) => state[reducerMount].scannerReady,
+  getCodeFromScanner: (state) => state[reducerMount].codeFromScanner,
 
   getTest: (state) => state[reducerMount].test
 };
@@ -99,6 +105,23 @@ const handlers = {
     return {
       ...state,
       flatWaterStatus: false
+    };
+  },
+  [actionTypes.FOUNTAIN_BARCODE_SCANNER_READY]: (state) => {
+    return {
+      ...state,
+      scannerReady: true
+    };
+  },
+  [actionTypes.FOUNTAIN_BARCODE_SCAN_COMPLETE]: (state, action) => {
+    const { data } = action;
+
+    console.log("DATA", data);
+
+    return {
+      ...state,
+      scannerReady: false,
+      codeFromScanner: data
     };
   }
 };

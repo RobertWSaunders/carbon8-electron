@@ -14,7 +14,11 @@ const {
   unauthenticate,
   triggerServerDisconnection
 } = actionCreators;
-const { getFlatWaterStatus } = selectors;
+const {
+  getFlatWaterStatus,
+  getAuthenticated,
+  getServerSocketConnected
+} = selectors;
 
 class Overview extends Component {
   constructor() {
@@ -26,13 +30,17 @@ class Overview extends Component {
   }
 
   async componentDidMount() {
-    await localStorage.removeItem(
-      process.env.FOUNTAIN_ACCESS_TOKEN_LOCAL_STORAGE_KEY
-    );
+    if (this.props.authenticated) {
+      await localStorage.removeItem(
+        process.env.FOUNTAIN_ACCESS_TOKEN_LOCAL_STORAGE_KEY
+      );
 
-    this.props.unauthenticate();
+      this.props.unauthenticate();
+    }
 
-    this.props.triggerServerDisconnection();
+    if (this.props.serverSocketConnected) {
+      this.props.triggerServerDisconnection();
+    }
   }
 
   openFountainInfoModal() {
@@ -238,7 +246,9 @@ class Overview extends Component {
 function mapStateToProps(state, ownProps) {
   return {
     ...ownProps,
-    flatWaterStatus: getFlatWaterStatus(state)
+    authenticated: getAuthenticated(state),
+    flatWaterStatus: getFlatWaterStatus(state),
+    serverSocketConnected: getServerSocketConnected(state)
   };
 }
 

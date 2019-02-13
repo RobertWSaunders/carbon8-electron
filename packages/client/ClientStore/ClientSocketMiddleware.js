@@ -57,11 +57,13 @@ class ClientSocketMiddleware {
     });
 
     this.socket.on("disconnect", () => {
-      this.socket = null;
+      if (this.socket) {
+        this.socket = null;
 
-      this.store.dispatch({
-        type: this.socketConnectionActionTypes.disconnected
-      });
+        this.store.dispatch({
+          type: this.socketConnectionActionTypes.disconnected
+        });
+      }
     });
 
     this.socket.on("message", (event) => {
@@ -75,19 +77,19 @@ class ClientSocketMiddleware {
   }
 
   handleSocketAction(action) {
+    const socketAction = this.getSocketActionFromReduxAction(action);
+
+    if (socketAction === this.socketDisconnectAction) {
+      this.socket.disconnect();
+    }
+
     if (!this.socket) {
       this.buffer.push(action);
 
       return this.createSocketConnection();
     }
 
-    const socketAction = this.getSocketActionFromReduxAction(action);
-
-    if (socketAction === this.socketDisconnectAction) {
-      this.socket.disconnect();
-    } else {
-      this.socket.emit(socketAction);
-    }
+    this.socket.emit(socketAction);
   }
 
   socketMiddleware() {

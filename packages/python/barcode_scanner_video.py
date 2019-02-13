@@ -9,9 +9,13 @@ import time
 import cv2
 
 # create socketio client
-sio = socketio.Client()
+sio = socketio.Client(logger=True, engineio_logger=True)
 
-#vs = VideoStream(usePiCamera=True)
+vs = VideoStream(usePiCamera=True)
+
+def deactivateScanner()
+  cv2.destroyAllWindows()
+  vs.stop()
 
 # socket connection handler
 @sio.on('connect')
@@ -19,16 +23,14 @@ def on_connect():
   print('[INFO] Socket has been connected to the local hardware server.')
 
 # scan barcode event handler
-@sio.on('SCAN_BARCODE')
+@sio.on('ACTIVATE_BARCODE_SCANNER')
 def on_message(data):
-  print("[INFO] Starting video stream for barcode scanning.")
+  print("[INFO] Activating the barcode scanner.")
 
   # start video stream on rpi camera module
   vs.start()
   # sleep to wait for boot up
   time.sleep(2.0)
-
-  found = set()
 
   sio.emit('BARCODE_SCANNER_READY')
 
@@ -44,22 +46,22 @@ def on_message(data):
 
       if barcodeData not in found:
         print("[INFO] Found barcode with the value: {}".format(barcodeData))
-        sio.emit('BARCODE_FOUND', barcodeData)
-        found.add(barcodeData)
+        sio.emit('BARCODE_SCAN_COMPLETE', barcodeData)
         active = False
 
 # scan barcode event handler
-@sio.on('STOP_SCAN_BARCODE')
+@sio.on('DEACTIVATE_BARCODE_SCANNER')
 def on_message(data):
-  print("[INFO] Stopping video stream for barcode scanning.")
-  cv2.destroyAllWindows()
-  vs.stop()
+  print("[INFO] Deactivating the barcode scanner.")
+  deactivateScanner()
 
 @sio.on('disconnect')
 def on_disconnect():
-    print('Socket has been disconnected from the local hardware server!')
+  print('Socket has been disconnected from the local hardware server!')
+  deactivateScanner()
 
 if __name__ == '__main__':
+  print('[INFO] Creating socket connection to the local hardware server.')
   # connect to the local hardware socket server
-  sio.connect('http://localhost:3000', {}, ['websocket'], None, 'socket')
+  sio.connect('http://localhost:3000', transports=['websocket'], socketio_path='/socket')
   sio.wait()

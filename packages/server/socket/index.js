@@ -9,19 +9,39 @@ const socketEvents = {
   SOCKET_DISCONNECTING: "disconnecting",
   SOCKET_ERROR: "error",
 
+  // To Fountain
+
   SPARKLING_WATER_ON: "SPARKLING_WATER_ON",
   SPARKLING_WATER_OFF: "SPARKLING_WATER_OFF",
 
   FLAT_WATER_ON: "FLAT_WATER_ON",
-  FLAT_WATER_OFF: "FLAT_WATER_OFF"
+  FLAT_WATER_OFF: "FLAT_WATER_OFF",
+
+  FOUNTAIN_BARCODE_SCANNER_READY: "FOUNTAIN_BARCODE_SCANNER_READY",
+  FOUNTAIN_BARCODE_SCAN_COMPLETE: "FOUNTAIN_BARCODE_SCAN_COMPLETE",
+
+  // To Python Barcode Scanner
+
+  ACTIVATE_BARCODE_SCANNER: "ACTIVATE_BARCODE_SCANNER",
+  DEACTIVATE_BARCODE_SCANNER: "DEACTIVATE_BARCODE_SCANNER"
 };
 
 const socketActions = {
+  // From Fountain
+
   TURN_ON_SPARKLING_WATER: "TURN_ON_SPARKLING_WATER",
   TURN_OFF_SPARKLING_WATER: "TURN_OFF_SPARKLING_WATER",
 
   TURN_ON_FLAT_WATER: "TURN_ON_FLAT_WATER",
-  TURN_OFF_FLAT_WATER: "TURN_OFF_FLAT_WATER"
+  TURN_OFF_FLAT_WATER: "TURN_OFF_FLAT_WATER",
+
+  ACTIVATE_BARCODE_SCANNER: "ACTIVATE_BARCODE_SCANNER",
+  DEACTIVATE_BARCODE_SCANNER: "DEACTIVATE_BARCODE_SCANNER",
+
+  // From Python Barcode Scanner
+
+  BARCODE_SCANNER_READY: "BARCODE_SCANNER_READY",
+  BARCODE_SCAN_COMPLETE: "BARCODE_SCAN_COMPLETE"
 };
 
 module.exports = (io, logger) => {
@@ -39,6 +59,16 @@ module.exports = (io, logger) => {
     });
 
     // Socket Action Handlers
+
+    // From Fountain
+
+    socket.on(socketActions.ACTIVATE_BARCODE_SCANNER, () => {
+      socket.broadcast.emit(socketEvents.ACTIVATE_BARCODE_SCANNER);
+    });
+
+    socket.on(socketActions.DEACTIVATE_BARCODE_SCANNER, () => {
+      socket.broadcast.emit(socketEvents.DEACTIVATE_BARCODE_SCANNER);
+    });
 
     socket.on(socketActions.TURN_ON_SPARKLING_WATER, () => {
       // sparklingWaterSolenoid.writeSync(1);
@@ -69,6 +99,21 @@ module.exports = (io, logger) => {
 
       socket.send({
         type: socketEvents.FLAT_WATER_OFF
+      });
+    });
+
+    // From Python Barcode Scanner
+
+    socket.on(socketActions.BARCODE_SCANNER_READY, () => {
+      socket.broadcast.send({
+        type: socketEvents.FOUNTAIN_BARCODE_SCANNER_READY
+      });
+    });
+
+    socket.on(socketActions.BARCODE_SCAN_COMPLETE, (data) => {
+      socket.broadcast.send({
+        type: socketEvents.FOUNTAIN_BARCODE_SCAN_COMPLETE,
+        data
       });
     });
   });

@@ -47,12 +47,22 @@ const hardwareSocketMiddlwareActionTypes = {
   TURN_OFF_SPARKLING_WATER:
     "@@/client/hardware/socket/TURN_OFF_SPARKLING_WATER",
 
+  ACTIVATE_BARCODE_SCANNER:
+    "@@/client/hardware/socket/ACTIVATE_BARCODE_SCANNER",
+  DEACTIVATE_BARCODE_SCANNER:
+    "@@/client/hardware/socket/DEACTIVATE_BARCODE_SCANNER",
+
   // Events
 
   FLAT_WATER_ON: "@@/client/hardware/internal/FLAT_WATER_ON",
   FLAT_WATER_OFF: "@@/client/hardware/internal/FLAT_WATER_OFF",
   SPARKLING_WATER_ON: "@@/client/hardware/internal/SPARKLING_WATER_ON",
-  SPARKLING_WATER_OFF: "@@/client/hardware/internal/SPARKLING_WATER_OFF"
+  SPARKLING_WATER_OFF: "@@/client/hardware/internal/SPARKLING_WATER_OFF",
+
+  FOUNTAIN_BARCODE_SCANNER_READY:
+    "@@/client/hardware/internal/FOUNTAIN_BARCODE_SCANNER_READY",
+  FOUNTAIN_BARCODE_SCAN_COMPLETE:
+    "@@/client/hardware/internal/FOUNTAIN_BARCODE_SCAN_COMPLETE"
 };
 
 export const hardwareSocketEventActionMap = {
@@ -60,7 +70,11 @@ export const hardwareSocketEventActionMap = {
   ["FLAT_WATER_OFF"]: hardwareSocketMiddlwareActionTypes.FLAT_WATER_OFF,
   ["SPARKLING_WATER_ON"]: hardwareSocketMiddlwareActionTypes.SPARKLING_WATER_ON,
   ["SPARKLING_WATER_OFF"]:
-    hardwareSocketMiddlwareActionTypes.SPARKLING_WATER_OFF
+    hardwareSocketMiddlwareActionTypes.SPARKLING_WATER_OFF,
+  ["FOUNTAIN_BARCODE_SCANNER_READY"]:
+    hardwareSocketMiddlwareActionTypes.FOUNTAIN_BARCODE_SCANNER_READY,
+  ["FOUNTAIN_BARCODE_SCAN_COMPLETE"]:
+    hardwareSocketMiddlwareActionTypes.FOUNTAIN_BARCODE_SCAN_COMPLETE
 };
 
 export const actionTypes = {
@@ -102,7 +116,14 @@ const invokeHardwareSocketActionCreators = {
   turnOnFlatWater: () => ({ type: actionTypes.TURN_ON_FLAT_WATER }),
   turnOffFlatWater: () => ({ type: actionTypes.TURN_OFF_FLAT_WATER }),
   turnOnSparklingWater: () => ({ type: actionTypes.TURN_ON_SPARKLING_WATER }),
-  turnOffSparklingWater: () => ({ type: actionTypes.TURN_OFF_SPARKLING_WATER })
+  turnOffSparklingWater: () => ({ type: actionTypes.TURN_OFF_SPARKLING_WATER }),
+
+  activateBarcodeScanner: () => ({
+    type: actionTypes.ACTIVATE_BARCODE_SCANNER
+  }),
+  deactivateBarcodeScanner: () => ({
+    type: actionTypes.DEACTIVATE_BARCODE_SCANNER
+  })
 };
 
 export const actionCreators = {
