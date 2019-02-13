@@ -34,10 +34,10 @@ const ActionButton = (props) => {
       box-shadow: ${boxShadow};
     }
     :disabled {
-      background-color: #eee;
-      color: #fff !important;
+      border-width: 0;
+      background-color: rgba(0, 0, 0, 0.3);
+      color: rgba(0, 0, 0, 0.6);
       box-shadow: none;
-      cursor: default;
     }
     :focus {
       outline: 0;
