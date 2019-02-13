@@ -202,6 +202,7 @@ class Dispense extends Component {
           <ActionButton
             onTouchStart={this.handleSparklingWaterDown.bind(this)}
             onTouchEnd={this.handleSparklingWaterUp.bind(this)}
+            disabled={!subscribed}
           >
             Sparkling Water
           </ActionButton>
