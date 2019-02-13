@@ -207,7 +207,11 @@ class ScanCode extends Component {
       <div
         css={css`
           width: ${!scanError ? "230px" : "300px"};
-          margin: ${!scanError ? "130px auto" : "90px auto"};
+          margin: ${!scanError
+            ? scanSuccess && user
+              ? "60px auto"
+              : "130px auto"
+            : "90px auto"};
           text-align: center;
         `}
       >
@@ -282,8 +286,9 @@ class ScanCode extends Component {
     if (countdown === 0 || scanErrorToOverview) {
       return <Redirect to="/overview" />;
     }
-    if (toDispense && authenticated && serverSocketConnected)
+    if (toDispense && authenticated && serverSocketConnected) {
       return <Redirect to="/dispense" />;
+    }
 
     return (
       <div>

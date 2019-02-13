@@ -5,7 +5,6 @@ import { css } from "@emotion/core";
 
 import { selectors, actionCreators } from "../ClientStore";
 import ActionButton from "./ActionButton";
-import { throws } from "assert";
 
 const {
   turnOnSparklingWater,
@@ -195,14 +194,14 @@ class Dispense extends Component {
         >
           <ActionButton
             style="margin-right: 90px;"
-            onMouseDown={this.handleFlatWaterDown.bind(this)}
-            onMouseUp={this.handleFlatWaterUp.bind(this)}
+            onTouchStart={this.handleFlatWaterDown.bind(this)}
+            onTouchEnd={this.handleFlatWaterUp.bind(this)}
           >
             Flat Water
           </ActionButton>
           <ActionButton
-            onMouseDown={this.handleSparklingWaterDown.bind(this)}
-            onMouseUp={this.handleSparklingWaterUp.bind(this)}
+            onTouchStart={this.handleSparklingWaterDown.bind(this)}
+            onTouchEnd={this.handleSparklingWaterUp.bind(this)}
           >
             Sparkling Water
           </ActionButton>

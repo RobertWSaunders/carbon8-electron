@@ -1,7 +1,7 @@
 // const Gpio = require("onoff").Gpio;
 
-// const flatWaterSolenoid = new Gpio(18, "out");
-// const sparklingWaterSolenoid = new Gpio(23, "out");
+// const flatWaterSolenoid = new Gpio(23, "out");
+// const sparklingWaterSolenoid = new Gpio(18, "out");
 
 const socketEvents = {
   SOCKET_CONNECTION: "connection",

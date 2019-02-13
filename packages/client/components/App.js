@@ -39,7 +39,7 @@ class App extends Component {
             <Route path="/scan-code" component={ScanCode} type="public" />
 
             {/*Private Routes */}
-            <Route path="/dispense" component={Dispense} type="private" />
+            <Route path="/dispense" component={Dispense} type="public" />
 
             {/* Catch all routes */}
             <Route path="*" component={NotFound} />
