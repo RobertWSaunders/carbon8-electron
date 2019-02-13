@@ -6,9 +6,10 @@ import { connect } from "react-redux";
 import { css } from "@emotion/core";
 import axios from "axios";
 
-import { actionCreators } from "../ClientStore";
+import { actionCreators, selectors } from "../ClientStore";
 
 const { setUser, authenticate, triggerServerConnection } = actionCreators;
+const { getUser, getServerSocketConnected, getAuthenticated } = selectors;
 
 class ScanCode extends Component {
   constructor(props) {
@@ -23,7 +24,8 @@ class ScanCode extends Component {
       scanCodeTextInputDisabled: false,
       showCountdown: true,
       scanError: false,
-      scanErrorToOverview: false
+      scanErrorToOverview: false,
+      scanSuccess: false
     };
 
     this.scanCodeTextInput = React.createRef();
@@ -83,7 +85,13 @@ class ScanCode extends Component {
 
       this.props.triggerServerConnection();
 
-      this.setState({ toDispense: true });
+      this.setState({ scanSuccess: true });
+
+      setTimeout(() => {
+        this.setState({
+          toDispense: true
+        });
+      }, 2000);
     } catch (err) {
       this.setState({
         scanError: true
@@ -192,7 +200,8 @@ class ScanCode extends Component {
   }
 
   renderScanSpinner() {
-    const { scanError } = this.state;
+    const { scanError, scanSuccess } = this.state;
+    const { user } = this.props;
 
     return (
       <div
@@ -203,21 +212,35 @@ class ScanCode extends Component {
         `}
       >
         {!scanError ? (
-          <div>
-            <BarLoader
-              width={230}
-              sizeUnit={"px"}
-              color={"#000"}
-              loading={this.state.loader}
-            />
-            <p
-              css={css`
-                font-size: 18px;
-              `}
-            >
-              {this.state.loaderTitle}
-            </p>
-          </div>
+          scanSuccess && user ? (
+            <div>
+              <img src={require("../assets/successCircle.svg")} height={80} />
+              <p
+                css={css`
+                  font-size: 18px;
+                `}
+              >
+                Hey {user.firstName}! {"We're"} so glad you are staying
+                hydrated.
+              </p>
+            </div>
+          ) : (
+            <div>
+              <BarLoader
+                width={230}
+                sizeUnit={"px"}
+                color={"#000"}
+                loading={this.state.loader}
+              />
+              <p
+                css={css`
+                  font-size: 18px;
+                `}
+              >
+                {this.state.loaderTitle}
+              </p>
+            </div>
+          )
         ) : (
           <div>
             <img src={require("../assets/errorCircle.svg")} height={80} />
@@ -254,11 +277,13 @@ class ScanCode extends Component {
 
   render() {
     const { toDispense, countdown, scanErrorToOverview } = this.state;
+    const { authenticated, serverSocketConnected } = this.props;
 
     if (countdown === 0 || scanErrorToOverview) {
       return <Redirect to="/overview" />;
     }
-    if (toDispense) return <Redirect to="/dispense" />;
+    if (toDispense && authenticated && serverSocketConnected)
+      return <Redirect to="/dispense" />;
 
     return (
       <div>
@@ -271,8 +296,17 @@ class ScanCode extends Component {
   }
 }
 
+function mapStateToProps(state, ownProps) {
+  return {
+    ...ownProps,
+    user: getUser(state),
+    authenticated: getAuthenticated(state),
+    serverSocketConnected: getServerSocketConnected(state)
+  };
+}
+
 export default connect(
-  null,
+  mapStateToProps,
   {
     setUser,
     authenticate,

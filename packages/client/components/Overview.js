@@ -135,8 +135,8 @@ class Overview extends Component {
       >
         <ActionButton
           style="margin-right: 90px;"
-          onMouseDown={this.handleFlatWaterDown.bind(this)}
-          onMouseUp={this.handleFlatWaterUp.bind(this)}
+          onTouchStart={this.handleFlatWaterDown.bind(this)}
+          onTouchEnd={this.handleFlatWaterUp.bind(this)}
         >
           Flat Water
         </ActionButton>

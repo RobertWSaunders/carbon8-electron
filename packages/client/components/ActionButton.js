@@ -28,7 +28,7 @@ const ActionButton = (props) => {
     box-shadow: ${subtleBoxShadow};
     transition: 0.25s ease;
     font-weight: 600;
-    :hover {
+    :active {
       color: #fff;
       background-color: #000;
       box-shadow: ${boxShadow};
@@ -78,6 +78,8 @@ const ActionButton = (props) => {
       onClick={props.onClick}
       onMouseDown={props.onMouseDown}
       onMouseUp={props.onMouseUp}
+      onTouchStart={props.onTouchStart}
+      onTouchEnd={props.onTouchEnd}
       type="button"
     >
       <div
