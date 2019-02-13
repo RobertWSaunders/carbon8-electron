@@ -1,72 +1,65 @@
-# import the necessary packages
+# Carbon8 Barcode Scanner Socket Client
+
 from imutils.video import VideoStream
 from pyzbar import pyzbar
-import argparse
+import socketio
 import datetime
 import imutils
 import time
 import cv2
 
-# construct the argument parser and parse the arguments
-ap = argparse.ArgumentParser()
-ap.add_argument("-o", "--output", type=str, default="barcodes.csv",
-	help="path to output CSV file containing barcodes")
-args = vars(ap.parse_args())
+# create socketio client
+sio = socketio.Client()
 
-# initialize the video stream and allow the camera sensor to warm up
-print("[INFO] starting video stream...")
-# vs = VideoStream(src=0).start()
-vs = VideoStream(usePiCamera=True).start()
-time.sleep(2.0)
+#vs = VideoStream(usePiCamera=True)
 
-# open the output CSV file for writing and initialize the set of
-# barcodes found thus far
-csv = open(args["output"], "w")
-found = set()
+# socket connection handler
+@sio.on('connect')
+def on_connect():
+  print('[INFO] Socket has been connected to the local hardware server.')
 
-# loop over the frames from the video stream
-while True:
-  # grab the frame from the threaded video stream and resize it to
-  # have a maximum width of 400 pixels
-  frame = vs.read()
-  frame = imutils.resize(frame, width=400)
+# scan barcode event handler
+@sio.on('SCAN_BARCODE')
+def on_message(data):
+  print("[INFO] Starting video stream for barcode scanning.")
 
-  # find the barcodes in the frame and decode each of the barcodes
-  barcodes = pyzbar.decode(frame)
+  # start video stream on rpi camera module
+  vs.start()
+  # sleep to wait for boot up
+  time.sleep(2.0)
 
-  # loop over the detected barcodes
-  for barcode in barcodes:
-    # extract the bounding box location of the barcode and draw
-    # the bounding box surrounding the barcode on the image
-    (x, y, w, h) = barcode.rect
-    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
+  found = set()
 
-    # the barcode data is a bytes object so if we want to draw it
-    # on our output image we need to convert it to a string first
-    barcodeData = barcode.data.decode("utf-8")
-    barcodeType = barcode.type
+  sio.emit('BARCODE_SCANNER_READY')
 
-    # draw the barcode data and barcode type on the image
-    text = "{} ({})".format(barcodeData, barcodeType)
-    cv2.putText(frame, text, (x, y - 10),
-      cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+  active = True
+  while active:
+    frame = vs.read()
+    frame = imutils.resize(frame, width=400)
 
-    # if the barcode text is currently not in our CSV file, write
-    # the timestamp + barcode to disk and update the set
-    if barcodeData not in found:
-      print("[INFO] Found {} barcode: {}".format(barcodeType, barcodeData))
-      found.add(barcodeData)
+    barcodes = pyzbar.decode(frame)
 
-  # show the output frame
-  cv2.imshow("Barcode Scanner", frame)
-  key = cv2.waitKey(1) & 0xFF
+    for barcode in barcodes:
+      barcodeData = barcode.data.decode("utf-8")
 
-  # if the `q` key was pressed, break from the loop
-  if key == ord("q"):
-    break
+      if barcodeData not in found:
+        print("[INFO] Found barcode with the value: {}".format(barcodeData))
+        sio.emit('BARCODE_FOUND', barcodeData)
+        found.add(barcodeData)
+        active = False
 
-# close the output CSV file do a bit of cleanup
-print("[INFO] cleaning up...")
-csv.close()
-cv2.destroyAllWindows()
-vs.stop()
+# scan barcode event handler
+@sio.on('STOP_SCAN_BARCODE')
+def on_message(data):
+  print("[INFO] Stopping video stream for barcode scanning.")
+  cv2.destroyAllWindows()
+  vs.stop()
+
+@sio.on('disconnect')
+def on_disconnect():
+    print('Socket has been disconnected from the local hardware server!')
+
+if __name__ == '__main__':
+  # connect to the local hardware socket server
+  sio.connect('http://localhost:3000', {}, ['websocket'], None, 'socket')
+  sio.wait()
