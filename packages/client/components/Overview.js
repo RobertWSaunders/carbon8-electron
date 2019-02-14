@@ -37,16 +37,16 @@ class Overview extends Component {
       this.props.setCode("");
     }
 
+    if (this.props.serverSocketConnected) {
+      this.props.triggerServerDisconnection();
+    }
+
     if (this.props.authenticated) {
       await localStorage.removeItem(
         process.env.FOUNTAIN_ACCESS_TOKEN_LOCAL_STORAGE_KEY
       );
 
       this.props.unauthenticate();
-    }
-
-    if (this.props.serverSocketConnected) {
-      this.props.triggerServerDisconnection();
     }
   }
 

@@ -35,6 +35,9 @@ class ClientSocketMiddleware {
     });
 
     this.socket.on("connect", async () => {
+      console.log("BOB");
+      console.trace();
+
       if (this.socketAuthenticateOnConnect) {
         const accessToken = await this.storageAccess.getValue(
           this.accessTokenKey
@@ -57,6 +60,7 @@ class ClientSocketMiddleware {
     });
 
     this.socket.on("disconnect", () => {
+      console.log("BIB");
       if (this.socket) {
         this.socket = null;
 
@@ -80,7 +84,7 @@ class ClientSocketMiddleware {
     const socketAction = this.getSocketActionFromReduxAction(action);
 
     if (socketAction === this.socketDisconnectAction) {
-      this.socket.disconnect();
+      return this.socket.disconnect();
     }
 
     if (!this.socket) {
