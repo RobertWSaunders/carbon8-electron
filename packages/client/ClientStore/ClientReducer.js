@@ -121,6 +121,14 @@ const handlers = {
       scannerReady: false,
       codeFromScanner: scanCode
     };
+  },
+  [actionTypes.SET_CODE]: (state, action) => {
+    const { code } = action.data;
+
+    return {
+      ...state,
+      codeFromScanner: code
+    };
   }
 };
 

@@ -1,6 +1,6 @@
 import MdArrowRoundBack from "react-ionicons/lib/MdArrowRoundBack";
-import { BarLoader } from "react-spinners";
 import { Redirect } from "react-router-dom";
+import { BarLoader } from "react-spinners";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { css } from "@emotion/core";
@@ -29,19 +29,18 @@ class ScanCode extends Component {
     super(props);
 
     this.state = {
-      scanCode: "",
       toDispense: false,
+
       loader: true,
       loaderTitle: "Waiting for scan...",
-      countdown: 30,
-      scanCodeTextInputDisabled: false,
-      showCountdown: true,
-      scanError: false,
-      scanErrorToOverview: false,
-      scanSuccess: false
-    };
 
-    this.scanCodeTextInput = React.createRef();
+      countdown: 30,
+      showCountdown: true,
+
+      scanError: false,
+      scanSuccess: false,
+      scanErrorToOverview: false
+    };
   }
 
   componentDidMount() {
@@ -58,31 +57,33 @@ class ScanCode extends Component {
     clearInterval(this.countdownInterval);
   }
 
-  handleScanCodeTextInputChange(e) {
-    this.setState({ scanCode: e.target.value });
+  componentDidUpdate(prevProps) {
+    const { codeFromScanner } = this.props;
 
-    if (this.state.scanCode.length >= 11) {
-      clearInterval(this.countdownInterval);
-
-      this.setState({
-        countdown: 30,
-        scanCodeTextInputDisabled: true,
-        showCountdown: false,
-        loaderTitle: "Checking scan code..."
-      });
-
+    if (
+      codeFromScanner !== prevProps.codeFromScanner &&
+      codeFromScanner !== ""
+    ) {
       this.handleScan();
     }
   }
 
   async handleScan() {
-    const { scanCode } = this.state;
+    const { codeFromScanner } = this.props;
+
+    clearInterval(this.countdownInterval);
+
+    this.setState({
+      countdown: 30,
+      showCountdown: false,
+      loaderTitle: "Checking scan code..."
+    });
 
     try {
       const res = await axios.post(
         `${process.env.SERVER_SOCKET_URI}/api/auth/sessionFromScanCode`,
         {
-          scanCode,
+          scanCode: codeFromScanner,
           fountainId: process.env.FOUNTAIN_UNIQUE_IDENTIFIER
         }
       );
@@ -100,24 +101,32 @@ class ScanCode extends Component {
 
       this.props.triggerServerConnection();
 
-      this.setState({ scanSuccess: true });
-
-      setTimeout(() => {
-        this.setState({
-          toDispense: true
-        });
-      }, 3000);
+      this.handleScanSuccess();
     } catch (err) {
-      this.setState({
-        scanError: true
-      });
-
-      setTimeout(() => {
-        this.setState({
-          scanErrorToOverview: true
-        });
-      }, 3000);
+      this.handleScanError();
     }
+  }
+
+  handleScanSuccess() {
+    this.setState({ scanSuccess: true });
+
+    setTimeout(() => {
+      this.setState({
+        toDispense: true
+      });
+    }, 3000);
+  }
+
+  handleScanError() {
+    this.setState({
+      scanError: true
+    });
+
+    setTimeout(() => {
+      this.setState({
+        scanErrorToOverview: true
+      });
+    }, 3000);
   }
 
   renderLogoHeader() {
@@ -208,8 +217,10 @@ class ScanCode extends Component {
             text-align: center;
           `}
         >
+          {JSON.stringify(this.state.toDispense)}
+          {JSON.stringify(this.props.authenticated)}
+          {JSON.stringify(this.props.serverSocketConnected)}
           Please scan your barcode in the place provided.
-          {this.props.codeFromScanner}
         </p>
       </div>
     );
@@ -277,24 +288,6 @@ class ScanCode extends Component {
     );
   }
 
-  renderHiddenInput() {
-    return (
-      <input
-        type="text"
-        value={this.props.codeFromScanner}
-        onChange={this.handleScanCodeTextInputChange.bind(this)}
-        ref={this.scanCodeTextInput}
-        disabled={this.state.scanCodeTextInputDisabled}
-        css={css`
-          opacity: 0;
-          :focus {
-            outline: none;
-          }
-        `}
-      />
-    );
-  }
-
   render() {
     const { toDispense, countdown, scanErrorToOverview } = this.state;
     const { authenticated, serverSocketConnected } = this.props;
@@ -311,7 +304,6 @@ class ScanCode extends Component {
         {this.renderLogoHeader()}
         {this.renderInstructionText()}
         {this.renderScanSpinner()}
-        {this.renderHiddenInput()}
       </div>
     );
   }
@@ -321,10 +313,10 @@ function mapStateToProps(state, ownProps) {
   return {
     ...ownProps,
     user: getUser(state),
-    authenticated: getAuthenticated(state),
-    serverSocketConnected: getServerSocketConnected(state),
     scannerReady: getScannerReady(state),
-    codeFromScanner: getCodeFromScanner(state)
+    authenticated: getAuthenticated(state),
+    codeFromScanner: getCodeFromScanner(state),
+    serverSocketConnected: getServerSocketConnected(state)
   };
 }
 
@@ -334,7 +326,7 @@ export default connect(
     setUser,
     authenticate,
     activateBarcodeScanner,
-    deactivateBarcodeScanner,
-    triggerServerConnection
+    triggerServerConnection,
+    deactivateBarcodeScanner
   }
 )(ScanCode);

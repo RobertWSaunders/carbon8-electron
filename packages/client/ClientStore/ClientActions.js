@@ -2,7 +2,9 @@ const clientActionTypes = {
   AUTHENTICATE: "@@/client/AUTHENTICATE",
   UNAUTHENTICATE: "@@/client/UNAUTHENTICATE",
 
-  SET_USER: "@@/client/SET_USER"
+  SET_USER: "@@/client/SET_USER",
+
+  SET_CODE: "@@/client/SET_CODE"
 };
 
 const serverSocketMiddlewareActionTypes = {
@@ -90,7 +92,9 @@ const clientActionCreators = {
   }),
   unauthenticate: () => ({ type: actionTypes.UNAUTHENTICATE }),
 
-  setUser: (user) => ({ type: actionTypes.SET_USER, data: { user } })
+  setUser: (user) => ({ type: actionTypes.SET_USER, data: { user } }),
+
+  setCode: (code) => ({ type: actionTypes.SET_CODE, data: { code } })
 };
 
 const invokeServerSocketActionCreators = {

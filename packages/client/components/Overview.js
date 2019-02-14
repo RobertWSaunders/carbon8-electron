@@ -9,14 +9,17 @@ import FountainInfoModal from "./FountainInfoModal";
 import ActionButton from "./ActionButton";
 
 const {
+  setCode,
+  unauthenticate,
   turnOnFlatWater,
   turnOffFlatWater,
-  unauthenticate,
   triggerServerDisconnection
 } = actionCreators;
+
 const {
-  getFlatWaterStatus,
   getAuthenticated,
+  getFlatWaterStatus,
+  getCodeFromScanner,
   getServerSocketConnected
 } = selectors;
 
@@ -30,6 +33,10 @@ class Overview extends Component {
   }
 
   async componentDidMount() {
+    if (this.props.codeFromScanner !== "") {
+      this.props.setCode("");
+    }
+
     if (this.props.authenticated) {
       await localStorage.removeItem(
         process.env.FOUNTAIN_ACCESS_TOKEN_LOCAL_STORAGE_KEY
@@ -247,6 +254,7 @@ function mapStateToProps(state, ownProps) {
   return {
     ...ownProps,
     authenticated: getAuthenticated(state),
+    codeFromScanner: getCodeFromScanner(state),
     flatWaterStatus: getFlatWaterStatus(state),
     serverSocketConnected: getServerSocketConnected(state)
   };
@@ -255,9 +263,10 @@ function mapStateToProps(state, ownProps) {
 export default connect(
   mapStateToProps,
   {
+    setCode,
+    unauthenticate,
     turnOnFlatWater,
     turnOffFlatWater,
-    unauthenticate,
     triggerServerDisconnection
   }
 )(Overview);
