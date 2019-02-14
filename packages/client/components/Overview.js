@@ -2,6 +2,7 @@ import IosSettings from "react-ionicons/lib/IosSettings";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { css } from "@emotion/core";
+import axios from "axios";
 
 import FountainStatisticCard from "./FountainStatisticCard";
 import { selectors, actionCreators } from "../ClientStore";
@@ -28,6 +29,13 @@ class Overview extends Component {
     super();
 
     this.state = {
+      statisticsLoading: true,
+
+      fountainInfo: null,
+      plasticBottlesSaved: "0",
+      flatWaterDispensed: "0 L",
+      sparklingWaterDispensed: "0 L",
+
       fountainInfoModalOpen: false
     };
   }
@@ -48,6 +56,8 @@ class Overview extends Component {
 
       this.props.unauthenticate();
     }
+
+    await this.fetchFountainStatistics();
   }
 
   openFountainInfoModal() {
@@ -64,6 +74,30 @@ class Overview extends Component {
 
   handleFlatWaterUp(e) {
     this.props.turnOffFlatWater();
+  }
+
+  async fetchFountainStatistics() {
+    try {
+      const res = await axios.get(
+        `${process.env.SERVER_SOCKET_URI}/api/fountains/${
+          process.env.FOUNTAIN_UNIQUE_IDENTIFIER
+        }`
+      );
+
+      const { fountain } = res.data;
+
+      setTimeout(() => {
+        this.setState({
+          fountainInfo: fountain,
+          statisticsLoading: false,
+          flatWaterDispensed: fountain.flatWaterDispensed,
+          plasticBottlesSaved: fountain.plasticBottlesSaved,
+          sparklingWaterDispensed: fountain.sparklingWaterDispensed
+        });
+      }, 500);
+    } catch (err) {
+      console.log("Erorr fetching fountain statistics!");
+    }
   }
 
   renderLogoHeader() {
@@ -211,15 +245,18 @@ class Overview extends Component {
         >
           <FountainStatisticCard
             title={"Flat Water Dispensed"}
-            statNumber={"1.83 L"}
+            statNumber={this.state.flatWaterDispensed}
+            loading={this.state.statisticsLoading}
           />
           <FountainStatisticCard
             title={"Plastic Bottles Saved"}
-            statNumber={"18390"}
+            statNumber={this.state.plasticBottlesSaved}
+            loading={this.state.statisticsLoading}
           />
           <FountainStatisticCard
             title={"Sparkling Water Dispensed"}
-            statNumber={"1.29 L"}
+            statNumber={this.state.sparklingWaterDispensed}
+            loading={this.state.statisticsLoading}
           />
         </div>
       </div>
@@ -227,11 +264,12 @@ class Overview extends Component {
   }
 
   renderFountainInfoModal() {
-    const { fountainInfoModalOpen } = this.state;
+    const { fountainInfoModalOpen, fountainInfo } = this.state;
 
     return (
       <FountainInfoModal
         modalOpen={fountainInfoModalOpen}
+        fountainInfo={fountainInfo}
         handleModalClose={this.closeFountainInfoModal.bind(this)}
       />
     );

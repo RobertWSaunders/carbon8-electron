@@ -217,9 +217,6 @@ class ScanCode extends Component {
             text-align: center;
           `}
         >
-          {JSON.stringify(this.state.toDispense)}
-          {JSON.stringify(this.props.authenticated)}
-          {JSON.stringify(this.props.serverSocketConnected)}
           Please scan your barcode in the place provided.
         </p>
       </div>

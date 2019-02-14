@@ -52,7 +52,14 @@ class ClientSocketMiddleware {
 
       if (this.buffer.length > 0) {
         this.buffer.forEach((action) => {
-          this.socket.emit(this.getSocketActionFromReduxAction(action));
+          if (action.data) {
+            this.socket.emit(
+              this.getSocketActionFromReduxAction(action),
+              action.data
+            );
+          } else {
+            this.socket.emit(this.getSocketActionFromReduxAction(action));
+          }
         });
       }
 
@@ -93,7 +100,11 @@ class ClientSocketMiddleware {
       return this.createSocketConnection();
     }
 
-    this.socket.emit(socketAction);
+    if (action.data) {
+      this.socket.emit(socketAction, action.data);
+    } else {
+      this.socket.emit(socketAction);
+    }
   }
 
   socketMiddleware() {

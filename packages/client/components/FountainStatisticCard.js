@@ -1,6 +1,6 @@
+import { BeatLoader } from "react-spinners";
 import { css } from "@emotion/core";
-import React from "react";
-import { throws } from "assert";
+import React, { Fragment } from "react";
 
 export default (props) => (
   <div
@@ -31,13 +31,25 @@ export default (props) => (
         border-width: 0.5px;
       `}
     />
-    <p
-      css={css`
-        font-size: 18px;
-        text-align: center;
-      `}
-    >
-      {props.statNumber}
-    </p>
+    {props.loading ? (
+      <div
+        css={css`
+          width: 200px;
+          text-align: center;
+          margin-top: 22px;
+        `}
+      >
+        <BeatLoader sizeUnit={"px"} color={"#000"} loading={props.loading} />
+      </div>
+    ) : (
+      <p
+        css={css`
+          font-size: 18px;
+          text-align: center;
+        `}
+      >
+        {props.statNumber}
+      </p>
+    )}
   </div>
 );

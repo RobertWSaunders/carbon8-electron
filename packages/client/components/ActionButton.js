@@ -13,24 +13,24 @@ const ActionButton = (props) => {
 
   let commonStyles = css`
     box-sizing: content-box;
-    height: 100px;
+    height: ${props.height ? props.height : "100px"};
     cursor: pointer;
-    width: 200px;
+    width: ${props.height ? props.height : "200px"};
     flex-direction: column;
     text-transform: uppercase;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     font-size: 18px;
-    color: #000;
-    background-color: #fff;
-    border: 1px solid #000;
+    color: ${props.color ? props.color : "#000"};
+    background-color: ${props.backgroundColor ? props.backgroundColor : "#fff"};
+    border: 1px solid ${props.color ? props.color : "#000"};
     box-shadow: ${subtleBoxShadow};
     transition: 0.25s ease;
     font-weight: 600;
     :active {
       color: #fff;
-      background-color: #000;
+      background-color: ${props.color ? props.color : "#000"};
       box-shadow: ${boxShadow};
     }
     :disabled {

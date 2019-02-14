@@ -7,12 +7,14 @@ import { selectors, actionCreators } from "../ClientStore";
 import ActionButton from "./ActionButton";
 
 const {
-  turnOnSparklingWater,
-  turnOffSparklingWater,
+  emitToMobile,
   turnOnFlatWater,
-  turnOffFlatWater
+  turnOffFlatWater,
+  turnOnSparklingWater,
+  turnOffSparklingWater
 } = actionCreators;
-const { getFlatWaterStatus, getSparklingWaterStatus, getUser } = selectors;
+
+const { getUser, getFlatWaterStatus, getSparklingWaterStatus } = selectors;
 
 const TIMEOUT_DELAY = 15;
 
@@ -30,6 +32,8 @@ class Dispense extends Component {
 
   componentDidMount() {
     this.setCountdownInterval();
+
+    this.props.emitToMobile({ type: "SCAN_CODE_COMPLETE", data: {} });
   }
 
   componentWillUnmount() {
@@ -64,6 +68,8 @@ class Dispense extends Component {
       });
 
       this.props.turnOnFlatWater();
+
+      this.props.emitToMobile({ type: "DISPENSING_WATER_START", data: {} });
     }
   }
 
@@ -75,6 +81,8 @@ class Dispense extends Component {
     });
 
     this.props.turnOffFlatWater();
+
+    this.props.emitToMobile({ type: "DISPENSING_WATER_END", data: {} });
   }
 
   handleSparklingWaterDown() {
@@ -272,9 +280,10 @@ function mapStateToProps(state, ownProps) {
 export default connect(
   mapStateToProps,
   {
-    turnOnSparklingWater,
-    turnOffSparklingWater,
+    emitToMobile,
     turnOnFlatWater,
-    turnOffFlatWater
+    turnOffFlatWater,
+    turnOnSparklingWater,
+    turnOffSparklingWater
   }
 )(Dispense);
