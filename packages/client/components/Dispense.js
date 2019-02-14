@@ -69,7 +69,10 @@ class Dispense extends Component {
 
       this.props.turnOnFlatWater();
 
-      this.props.emitToMobile({ type: "DISPENSING_WATER_START", data: {} });
+      this.props.emitToMobile({
+        type: "DISPENSING_FLAT_WATER_START",
+        data: {}
+      });
     }
   }
 
@@ -82,7 +85,7 @@ class Dispense extends Component {
 
     this.props.turnOffFlatWater();
 
-    this.props.emitToMobile({ type: "DISPENSING_WATER_END", data: {} });
+    this.props.emitToMobile({ type: "DISPENSING_FLAT_WATER_END", data: {} });
   }
 
   handleSparklingWaterDown() {
@@ -94,6 +97,11 @@ class Dispense extends Component {
       });
 
       this.props.turnOnSparklingWater();
+
+      this.props.emitToMobile({
+        type: "DISPENSING_SPARKLING_WATER_START",
+        data: {}
+      });
     }
   }
 
@@ -105,6 +113,11 @@ class Dispense extends Component {
     });
 
     this.props.turnOffSparklingWater();
+
+    this.props.emitToMobile({
+      type: "DISPENSING_SPARKLING_WATER_END",
+      data: {}
+    });
   }
 
   renderLogoHeader() {
